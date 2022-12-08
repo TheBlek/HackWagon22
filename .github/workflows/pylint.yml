@@ -25,7 +25,7 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py') --docstring-min-length=20 --disable=C0114
+        pylint $(git ls-files '*.py') --docstring-min-length=20 --disable=C0114,C0115 --fail-under=8
 
     - name: Analysing the code with mypy
       run: |
