@@ -7,7 +7,7 @@ def run(request):
     try:
         bot.stop_polling()
         bot.polling(none_stop=True, interval=0)
-    except Exception as e:
+    except Exception as exception:
         time.sleep(1)
         bot.stop_polling()
         run(request)
