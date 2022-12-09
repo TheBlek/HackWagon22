@@ -31,6 +31,16 @@ strict_concatenate = true
 ignore_missing_imports = true
 plugins = ["mypy_django_plugin.main"]
 
+[tool.pylint]
+    [tool.pylint.'BASIC']
+    docstring-min-length=20
+
+    [tool.pylint.'MAIN']
+    fail-under=8
+
+    [tool.pylint.'MESSAGES CONTROL']
+    disable=['missing-docstring', 'too-few-public-methods']
+
 [tool.django-stubs]
 django_settings_module = "settings"
 
