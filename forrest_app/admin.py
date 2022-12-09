@@ -87,13 +87,13 @@ class GroupAdmin(admin.ModelAdmin):
 
     form = GroupForm
 
-    def admins_(self, group) -> str:
+    def admins_(self, group: Group) -> list[str] | str:
         admins = [str(admin_.full_name) for admin_ in group.admins.all()]
-
         if len(admins) > 1:
             return ', '.join(admins)
         elif len(admins) == 1:
             return admins[0]
+        return "None"
 
 
 @admin.register(TimeBot)

@@ -172,7 +172,7 @@ class Timetable(models.Model):
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return f'{self.discipline.short_name} {self.time}'
+        return f'{self.discipline} {self.time}'
 
     class Meta:
         verbose_name = 'Расписание'
@@ -233,7 +233,7 @@ class Homework(models.Model):
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return f'#{self.id} {self.subject.short_name}'
+        return f'#{self.id} {self.subject}'
 
     class Meta:
         verbose_name = 'Домашнее задание'

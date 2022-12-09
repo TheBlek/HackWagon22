@@ -1,5 +1,6 @@
 import datetime
 import settings
+from .models import *
 import telebot
 from .keyboards import *
 from .models import *

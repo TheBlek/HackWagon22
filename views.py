@@ -1,6 +1,5 @@
 import time
 from django.http import HttpRequest
-
 from forrest_app.bot import bot
 
 
