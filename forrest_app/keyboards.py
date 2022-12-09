@@ -25,7 +25,7 @@ class Keyboard(telebot.types.ReplyKeyboardMarkup):
 
     def make_keyboard(self):
         for text in self.text:
-            if type(text) == list:
+            if isinstance(text, list):
                 self.row(*[telebot.types.KeyboardButton(text_[0]) for text_ in text])
             else:
                 self.add(telebot.types.KeyboardButton(text))

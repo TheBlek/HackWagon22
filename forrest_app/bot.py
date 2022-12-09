@@ -13,7 +13,7 @@ def start_command(message):
 
 
 @bot.message_handler(commands=['today'])
-def start_command(message):
+def today_command(message):
     pass
 
 
