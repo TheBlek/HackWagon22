@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: list, **options: dict) -> None:
         user = get_user_model()
         if user.objects.count() == 0:
             print('Creating admin account')

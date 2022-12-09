@@ -4,7 +4,7 @@ from forrest_app.bot import bot
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: list, **options: dict) -> None:
         try:
             bot.polling(none_stop=True, interval=5)
         except Exception as _:
