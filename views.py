@@ -2,7 +2,7 @@ import time
 from forrest_app.bot import bot
 
 
-def run(request):
+def run(request) -> None:
     try:
         bot.stop_polling()
         bot.polling(none_stop=True, interval=0)

@@ -13,22 +13,22 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3qq3th+936qw3j6m=-4ui*5zi+=*w5bnnxrb3-a6#*!a83w0d4'
+SECRET_KEY: str = 'django-insecure-3qq3th+936qw3j6m=-4ui*5zi+=*w5bnnxrb3-a6#*!a83w0d4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG: bool = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list = []
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS: list[str] = [
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'forrest_app'
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE: list[str] = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,9 +49,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF: str = 'urls'
 
-TEMPLATES = [
+TEMPLATES: list[dict[str:list | str | bool | dict]] = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates']
@@ -68,12 +68,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION: str = 'wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+DATABASES: dict[str:str] = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
@@ -83,7 +83,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str:str]] = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -101,24 +101,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE: str = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE: str = 'UTC'
 
-USE_I18N = True
+USE_I18N: bool = True
 
-USE_TZ = True
+USE_TZ: bool = True
 
-BOT_TOKEN = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'
+BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'
 
-OPEN_WEATHER_TOKEN = '45751c89bc82fb7afa7ca0b2093a88f6'
+OPEN_WEATHER_TOKEN: str= '45751c89bc82fb7afa7ca0b2093a88f6'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL: str = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD: str = 'django.db.models.BigAutoField'
