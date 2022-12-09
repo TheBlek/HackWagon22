@@ -16,8 +16,7 @@ def start_command(message: telebot.types.Message) -> None:
 
 @bot.message_handler(commands=['today'])
 def today_command(message: telebot.types.Message) -> None:
-    user: BotUser = BotUser.objects.get(telegram_id=message.chat.id)
-
+    user: AdminBotUser = AdminBotUser.objects.get(telegram_id=message.chat.id)
 
 
 @bot.message_handler(content_types=['text'])
