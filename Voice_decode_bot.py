@@ -10,8 +10,7 @@ import pandas as pd
 
 
 language='ru_RU' 
-#TOKEN='5840488180:AAFr_Zs9Ztj2L-zPWdcT-JHUiE-deiqT3Bg' #Lera
-TOKEN='5921489627:AAHw-CdK_luquCulPdxQHZJeWUDYYnlMc6M' #Maxx
+TOKEN='TOKEN'
 bot = telebot.TeleBot(TOKEN)
 
 frames = pd.DataFrame({'Товар': [],
