@@ -12,6 +12,7 @@ pytelegrambotapi = "^4.7.1"
 django-jazzmin = "^2.6.0"
 sqlparse = "^0.4.3"
 asgiref = "^3.5.2"
+django-stubs = {extras = ["compatible-mypy"], version = "^1.13.1"}
 
 [tool.mypy]
 warn_unused_configs = true
