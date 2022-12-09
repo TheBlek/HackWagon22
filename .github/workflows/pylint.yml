@@ -29,4 +29,8 @@ jobs:
 
     - name: Analysing the code with mypy
       run: |
-        mypy $(git ls-files '*.py') --strict
+        mypy $(git ls-files '*.py') --warn-unused-configs \
+                            --disallow-any-generics --disallow-untyped-calls \
+        --disallow-untyped-defs --disallow-incomplete-defs --check-untyped-defs --disallow-untyped-decorators \
+        --no-implicit-optional --warn-redundant-casts --warn-unused-ignores --warn-return-any --no-implicit-reexport \
+        --strict-equality --strict-concatenate
