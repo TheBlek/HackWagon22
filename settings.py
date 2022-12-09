@@ -51,11 +51,10 @@ MIDDLEWARE: list[str] = [
 
 ROOT_URLCONF: str = 'urls'
 
-TEMPLATES: list[dict[str, list | str | bool | dict]] = [
+TEMPLATES: list[dict[str, list[str | Path] | str | bool | dict[str, list[str | Path]]]] = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,7 +72,7 @@ WSGI_APPLICATION: str = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES: dict[str, str | dict] = {
+DATABASES: dict[str, dict[str, str | Path]] = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',

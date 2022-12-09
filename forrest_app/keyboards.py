@@ -2,9 +2,9 @@ import telebot
 
 
 class InlineKeyboard(telebot.types.InlineKeyboardMarkup):  #
-    def __init__(self, text: list, width: int = 2) -> None:
+    def __init__(self, text: list[str | list[str]], width: int = 2) -> None:
         super().__init__()
-        self.text = text
+        self.text: list[str | list[str]] = text
         if width == 2:
             self.row_width = len(text)
         else:
@@ -17,10 +17,10 @@ class InlineKeyboard(telebot.types.InlineKeyboardMarkup):  #
 
 
 class Keyboard(telebot.types.ReplyKeyboardMarkup):
-    def __init__(self, text: list, resize: bool = True) -> None:
+    def __init__(self, text: list[str], resize: bool = True) -> None:
         super().__init__()
         self.resize_keyboard = resize
-        self.text = text
+        self.text: list[str] = text
         self.make_keyboard()
 
     def make_keyboard(self) -> None:

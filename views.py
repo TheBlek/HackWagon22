@@ -1,8 +1,10 @@
 import time
+from django.http import HttpRequest
+
 from forrest_app.bot import bot
 
 
-def run(request) -> None:
+def run(request: HttpRequest) -> None:
     try:
         bot.stop_polling()
         bot.polling(none_stop=True, interval=0)

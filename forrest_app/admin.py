@@ -77,6 +77,7 @@ class AdminBotUserAdmin(admin.ModelAdmin):
 
     form = AdminBotUserForm
 
+
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = ['group_chat_id',
@@ -86,7 +87,7 @@ class GroupAdmin(admin.ModelAdmin):
 
     form = GroupForm
 
-    def admins_(self, group):
+    def admins_(self, group) -> str:
         admins = [str(admin_.full_name) for admin_ in group.admins.all()]
 
         if len(admins) > 1:
