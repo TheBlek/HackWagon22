@@ -24,7 +24,7 @@ SECRET_KEY: str = 'django-insecure-3qq3th+936qw3j6m=-4ui*5zi+=*w5bnnxrb3-a6#*!a8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = True
 
-ALLOWED_HOSTS: list = []
+ALLOWED_HOSTS: list[str] = []
 
 # Application definition
 
@@ -51,7 +51,7 @@ MIDDLEWARE: list[str] = [
 
 ROOT_URLCONF: str = 'urls'
 
-TEMPLATES: list[dict[str:list | str | bool | dict]] = [
+TEMPLATES: list[dict[str, list | str | bool | dict]] = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates']
@@ -73,7 +73,7 @@ WSGI_APPLICATION: str = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES: dict[str:str] = {
+DATABASES: dict[str, str | dict] = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
@@ -83,7 +83,7 @@ DATABASES: dict[str:str] = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS: list[dict[str:str]] = [
+AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -111,7 +111,7 @@ USE_TZ: bool = True
 
 BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'
 
-OPEN_WEATHER_TOKEN: str= '45751c89bc82fb7afa7ca0b2093a88f6'
+OPEN_WEATHER_TOKEN: str = '45751c89bc82fb7afa7ca0b2093a88f6'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
