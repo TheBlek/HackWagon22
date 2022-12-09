@@ -18,7 +18,7 @@ class AdminBotUser(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'#{self.telegram_id} @{self.nickname}'
 
     class Meta:
@@ -43,7 +43,7 @@ class Group(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'#{str(self.group_chat_id)[1:]}'
 
     class Meta:
@@ -70,7 +70,7 @@ class Teacher(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.first_name} {self.second_name}'
 
     class Meta:
@@ -98,7 +98,7 @@ class Discipline(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.short_name}'
 
     class Meta:
@@ -120,7 +120,7 @@ class TimeBot(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name}'
 
     class Meta:
@@ -171,7 +171,7 @@ class Timetable(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.discipline.short_name} {self.time}'
 
     class Meta:
@@ -186,7 +186,7 @@ class HomeworkType(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name}'
 
     class Meta:
@@ -232,7 +232,7 @@ class Homework(models.Model):
 
     objects = models.Manager()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'#{self.id} {self.subject.short_name}'
 
     class Meta:
