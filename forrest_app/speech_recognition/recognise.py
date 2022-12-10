@@ -1,12 +1,17 @@
-"""
-Тут одна функция recognise, которая получает на вход:
-        -инстанс бота
-        -ид файла
+import speech_recognition as sr
 
-Функция пользуется методами и классами из других файлов в этой директории
 
-Возвращает читаемую строку вида:
-ключ: значение
-...
-ключ: значение
-все верно?"""
+def recognise(filename: str) -> str:
+    """ Получает на вход:
+            -ид файла
+        Возвращает строку вида:
+            -апельсины 20 мандарины 15 яблоки 3"""
+
+    r = sr.Recognizer()
+    with sr.AudioFile(filename) as source:
+        # listen for the data (load audio to memory)
+        audio_data = r.record(source)
+        # recognize (convert from speech to text)
+        text = r.recognize_google(audio_data, language="ru-RU")
+
+    return text
