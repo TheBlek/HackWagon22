@@ -29,7 +29,7 @@ ALLOWED_HOSTS: list[str] = []
 # Application definition
 
 INSTALLED_APPS: list[str] = [
-    'jazzmin',
+    #'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,7 +108,8 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'
+# BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'  # Lera
+BOT_TOKEN: str = '5921489627:AAHw-CdK_luquCulPdxQHZJeWUDYYnlMc6M'  # Maxx
 
 OPEN_WEATHER_TOKEN: str = '45751c89bc82fb7afa7ca0b2093a88f6'
 
