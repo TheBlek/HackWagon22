@@ -1,17 +1,18 @@
-import speech_recognition as sr
+from audio_processing import audio_processing
+import telebot
 
 
-def recognise(filename: str) -> str:
-    """ Получает на вход:
-            -ид файла
-        Возвращает строку вида:
-            -апельсины 20 мандарины 15 яблоки 3"""
+def recognise(bot: telebot.TeleBot, message: telebot.types.Message) -> str:  # -> DataFrameExtended
+    """ Функция (главная по иерархии внутри обработки voice message),
+        которая в итоге даёт преобразует в FrameExtended
 
-    r = sr.Recognizer()
-    with sr.AudioFile(filename) as source:
-        # listen for the data (load audio to memory)
-        audio_data = r.record(source)
-        # recognize (convert from speech to text)
-        text = r.recognize_google(audio_data, language="ru-RU")
+        Получает на вход:
+                -инстанс бота
+                -сообщение
+        Возвращает DataFrame вида:
+                -*потом скопируем код-пример* """
+
+    # распознание текста из wav файла
+    text = audio_processing(bot, message)
 
     return text

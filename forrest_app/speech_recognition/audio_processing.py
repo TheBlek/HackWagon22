@@ -1,16 +1,16 @@
+import speech_recognition as sr
 from time import time
 from pydub import AudioSegment
 import telebot
 
-from recognise import recognise
 
-
-def voice_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """Получает на вход:
-            -инстанс бота
-            -сообщение
-        Возвращает читаемую строку вида:
-            -апельсины 20 мандарины 15 яблоки 3"""
+def audio_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
+    """ Берётся бот, message и выводится текст из конвертированного в wav ogg`а
+        Получает на вход:
+                -инстанс бота
+                -сообщение
+        Возвращает строку вида:
+                -апельсины 20 мандарины 15 яблоки 3"""
 
     # принимаем ogg файл
     file_info = bot.get_file(message.voice.file_id)
@@ -25,7 +25,11 @@ def voice_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> st
     sound = AudioSegment.from_ogg(src)
     sound.export(dst, format="wav")
 
-    # распознание текста из wav файла
-    text = recognise(dst)
+    r = sr.Recognizer()
+    with sr.AudioFile(dst) as source:
+        # listen for the data (load audio to memory)
+        audio_data = r.record(source)
+        # recognize (convert from speech to text)
+        text = r.recognize_google(audio_data, language="ru-RU")
 
     return text
