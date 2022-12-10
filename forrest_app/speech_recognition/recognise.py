@@ -1,7 +1,7 @@
 import speech_recognition as sr
 
 
-def recognise(filename) -> str:
+def recognise(filename: str) -> str:
     """ Получает на вход:
             -ид файла
         Возвращает строку вида:

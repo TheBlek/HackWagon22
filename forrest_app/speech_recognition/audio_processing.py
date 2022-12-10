@@ -1,10 +1,11 @@
 from time import time
 from pydub import AudioSegment
+import telebot
 
 from recognise import recognise
 
 
-def voice_processing(bot, message) -> str:
+def voice_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     """Получает на вход:
             -инстанс бота
             -сообщение
