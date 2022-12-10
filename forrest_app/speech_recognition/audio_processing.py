@@ -1,6 +1,7 @@
-from recognise import recognise
 from time import time
 from pydub import AudioSegment
+
+from recognise import recognise
 
 
 def voice_processing(bot, message) -> str:
