@@ -67,3 +67,10 @@ def help_message(message: telebot.types.Message) -> None:
 def print_state(message: telebot.types.Message) -> None:
     user = BotUser.objects.get(chat_id = message.chat.id)
     bot.send_message(user.chat_id, "You are in " + BotStates(user.state).name)
+
+@bot.message_handler()
+def invalid_message(message: telebot.types.Message) -> None:
+    bot.send_message(
+        message.chat.id,
+        "Простите, я вас не понял. Вы можете посмотреть мои возможности в /help"
+    )
