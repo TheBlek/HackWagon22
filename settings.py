@@ -109,8 +109,7 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-# BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'  # Lera
-BOT_TOKEN: str = '5723934802:AAHUI1s6HQuFC2xYNiI--VYVKKOz0OT8DuI'  # Maxx
+BOT_TOKEN: str = '5723934802:AAHUI1s6HQuFC2xYNiI--VYVKKOz0OT8DuI'  # Egor
 
 class BotStates(IntEnum):
     REGISTRATION = 0

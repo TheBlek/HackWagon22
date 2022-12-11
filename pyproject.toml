@@ -32,6 +32,11 @@ no_implicit_reexport = true
 strict_equality = true
 strict_concatenate = true
 ignore_missing_imports = true
+
+exclude = [
+    '\d\d\d\d_\w+\.py',
+]
+
 plugins = ["mypy_django_plugin.main"]
 
 [tool.pylint]
@@ -40,6 +45,7 @@ plugins = ["mypy_django_plugin.main"]
 
     [tool.pylint.'MAIN']
     fail-under=8
+    ignore='migrations'
 
     [tool.pylint.'MESSAGES CONTROL']
     disable=['missing-docstring', 'too-few-public-methods']
