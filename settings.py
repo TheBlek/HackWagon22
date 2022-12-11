@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from enum import IntEnum
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
@@ -110,6 +111,11 @@ USE_TZ: bool = True
 
 # BOT_TOKEN: str = '5877474089:AAH7wEkk88ghYtycRecKXik9SZ5IjO1ESjI'  # Lera
 BOT_TOKEN: str = '5921489627:AAHw-CdK_luquCulPdxQHZJeWUDYYnlMc6M'  # Maxx
+
+class BotStates(IntEnum):
+    REGISTRATION = 0
+    MAIN_MENU = 1
+    RECORDING = 2
 
 OPEN_WEATHER_TOKEN: str = '45751c89bc82fb7afa7ca0b2093a88f6'
 
