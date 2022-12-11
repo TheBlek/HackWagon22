@@ -1,24 +1,69 @@
-import datetime
-import settings
-from .models import *
+from functools import partial
+import re
 import telebot
-from .keyboards import *
-from .models import *
-from .bd_scripts import *
 
-bot: telebot.TeleBot = telebot.TeleBot(settings.BOT_TOKEN)
+from settings import BOT_TOKEN, BotStates
+from .models import BotUser
+
+bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
+
+def in_state(state: BotStates, message: telebot.types.Message) -> bool:
+    user = BotUser.objects.get(chat_id = message.chat.id)
+    return user.state == state
 
 
 @bot.message_handler(commands=['start'])
 def start_command(message: telebot.types.Message) -> None:
-    pass
+    user = BotUser(
+        chat_id = message.chat.id,
+        nickname = message.chat.username,
+        state = BotStates.REGISTRATION.value,
+    )
+    if isinstance(message.chat.first_name, str) and \
+        isinstance(message.chat.last_name, str):
+
+        user.full_name = message.chat.first_name + " " + message.chat.last_name
+        user.state = BotStates.MAIN_MENU.value
+        bot.send_message(
+            message.chat.id,
+            "Здравия желаю! Можете посмотреть функционал в /help"
+        )
+    else:
+        bot.send_message(
+            message.chat.id,
+            "Здравия желаю! Для завершения регистрации, напишите нам своё полное имя"
+        )
+
+    user.save()
 
 
-@bot.message_handler(commands=['today'])
-def today_command(message: telebot.types.Message) -> None:
-    user: AdminBotUser = AdminBotUser.objects.get(telegram_id=message.chat.id)
+@bot.message_handler(content_types=['text'], func = partial(in_state, BotStates.REGISTRATION))
+def fill_full_name(message: telebot.types.Message) -> None:
+    full_name_pattern = re.compile(r"\w+ \w+")
+    if full_name_pattern.fullmatch(message.text):
+        user = BotUser.objects.get(chat_id = message.chat.id)
+        user.full_name = message.text
+        user.state = BotStates.MAIN_MENU
+        user.save()
 
+        bot.send_message(
+            message.chat.id,
+            "Поздравляю с завершением регистрации! Можете посмотреть функционал в /help"
+        )
+    else:
+        bot.send_message(
+            message.chat.id,
+            "Кажется, вы написали нам не полное имя, попробуйте еще раз"
+        )
 
-@bot.message_handler(content_types=['text'])
-def text(message: telebot.types.Message) -> None:
-    bot.send_message(message.chat.id, message.text)
+@bot.message_handler(commands=['help'])
+def help_message(message: telebot.types.Message) -> None:
+    bot.send_message(
+        message.chat.id,
+        "/record - Начать запись новой таблицы учёта"
+    )
+
+@bot.message_handler(commands=['state'])
+def print_state(message: telebot.types.Message) -> None:
+    user = BotUser.objects.get(chat_id = message.chat.id)
+    bot.send_message(user.chat_id, "You are in " + BotStates(user.state).name)

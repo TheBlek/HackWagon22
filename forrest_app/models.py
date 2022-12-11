@@ -3,8 +3,8 @@ from settings import BotStates
 
 
 class BotUser(models.Model):
-    telegram_id = models.BigIntegerField(primary_key=True,
-                                         verbose_name='ID в телеграм',
+    chat_id = models.BigIntegerField(primary_key=True,
+                                         verbose_name='ID телеграм чата',
                                          null=False,
                                          blank=False
                                          )
@@ -19,20 +19,20 @@ class BotUser(models.Model):
 
     STATES = [
         (BotStates.REGISTRATION.value, BotStates.REGISTRATION.name),
-        (BotState.MAIN_MENU.value, BotStates.MAIN_MENU.name),
-        (BotState.RECORDING.value, BotStates.RECORDING.name),
+        (BotStates.MAIN_MENU.value, BotStates.MAIN_MENU.name),
+        (BotStates.RECORDING.value, BotStates.RECORDING.name),
     ]
 
     state = models.IntegerField(verbose_name='Текущее состояние',
                                 choices=STATES,
-                                default=BotStates.REGISTRATION.value
+                                default=BotStates.REGISTRATION.value,
                                 null=False,
-                                black=False)
+                                blank=False)
 
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return f'#{self.telegram_id} @{self.nickname}'
+        return f'#{self.chat_id} @{self.nickname}'
 
     class Meta:
         verbose_name = 'Пользователь бота'
