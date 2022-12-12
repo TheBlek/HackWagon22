@@ -45,7 +45,7 @@ class Items(models.Model):
     count = models.IntegerField()
 
     objects = models.Manager()
-    
+
     def __str__(self) -> str:
         return f'{self.name} {self.count}шт'
 

@@ -10,5 +10,5 @@ class BotUserAdmin(admin.ModelAdmin):
     form = BotUserForm
 
 @admin.register(Items)
-class BotUserAdmin(admin.ModelAdmin):
+class ItemsAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'count')
