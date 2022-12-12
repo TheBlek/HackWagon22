@@ -39,10 +39,10 @@ class BotUser(models.Model):
         verbose_name_plural = 'Пользователи бота'
 
 
-# class Value(models.Model):
-#     user = models.ForeignKey(to=BotUser,
-#                              on_delete=models.CASCADE)
-#     key = models.CharField(max_length=50)
-#     value = models.IntegerField()
+class Items(models.Model):
+     user = models.ForeignKey(to=BotUser,
+                              on_delete=models.CASCADE)
+     name = models.CharField(max_length=50)
+     count = models.IntegerField()
 
-#     objects = models.Manager()
+     objects = models.Manager()

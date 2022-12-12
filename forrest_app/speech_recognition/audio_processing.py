@@ -1,28 +1,19 @@
 import speech_recognition as sr
-from time import time
 from pydub import AudioSegment
-import telebot
+import re
 
 
-def audio_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Берётся бот, message и выводится текст из конвертированного в wav ogg`а
+def audio_processing(filename: str) -> list:
+    """ Берётся имя файла и выводится текст из конвертированного в wav ogg`а
         Получает на вход:
                 -инстанс бота
                 -сообщение
-        Возвращает строку вида:
-                -апельсины 20 мандарины 15 яблоки 3"""
-
-    # принимаем ogg файл
-    file_info = bot.get_file(message.voice.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    file1 = f'{message.chat.id}_{int(time())}.ogg'
-    with open(file1, 'wb') as new_file:
-        new_file.write(downloaded_file)
-    src = file1
+        Возвращает лист листов размера 2 вида [[str, int]]:
+                -'апельсины 20 мандарины 13 елочные игрушки 34' """
 
     # преобразование в wav
-    dst = f'{message.chat.id}_{int(time())}.wav'
-    sound = AudioSegment.from_ogg(src)
+    dst = f'./files/{filename}.wav'
+    sound = AudioSegment.from_ogg(f'./files/{filename}.ogg')
     sound.export(dst, format="wav")
 
     r = sr.Recognizer()
@@ -33,3 +24,18 @@ def audio_processing(bot: telebot.TeleBot, message: telebot.types.Message) -> st
         text = r.recognize_google(audio_data, language="ru-RU")
 
     return text
+
+
+def to_tokens(text: str) -> list:
+    """ Берётся текст и преобразуется в токены
+        Получает на вход:
+                -текст
+        Возвращает лист листов размера 2 вида [[str, int]]:
+                -[['апельсины', 20], ['мандарины', 13], ['елочные игрушки', 34]]"""
+
+    tokens = [list(s) for s in re.findall(r"(\D+\s)(\d+)", text)]
+    for i in range(1, len(tokens)):
+        tokens[i][0] = (tokens[i][0])[1:]
+        tokens[i][1] = int(tokens[i][1])
+
+    return tokens

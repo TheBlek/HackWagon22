@@ -7,6 +7,7 @@ from .models import BotUser
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
 
+
 def in_state(state: BotStates, message: telebot.types.Message) -> bool:
     user = BotUser.objects.get(chat_id = message.chat.id)
     return user.state == state
@@ -56,6 +57,7 @@ def fill_full_name(message: telebot.types.Message) -> None:
             "Кажется, вы написали нам не полное имя, попробуйте еще раз"
         )
 
+
 @bot.message_handler(commands=['help'])
 def help_message(message: telebot.types.Message) -> None:
     bot.send_message(
@@ -63,10 +65,12 @@ def help_message(message: telebot.types.Message) -> None:
         "/record - Начать запись новой таблицы учёта"
     )
 
+
 @bot.message_handler(commands=['state'])
 def print_state(message: telebot.types.Message) -> None:
     user = BotUser.objects.get(chat_id = message.chat.id)
     bot.send_message(user.chat_id, "You are in " + BotStates(user.state).name)
+
 
 @bot.message_handler()
 def invalid_message(message: telebot.types.Message) -> None:
