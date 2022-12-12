@@ -12,8 +12,8 @@ def audio_processing(filename: str) -> list:
                 -'апельсины 20 мандарины 13 елочные игрушки 34' """
 
     # преобразование в wav
-    dst = f'../files/{filename}.wav'
-    sound = AudioSegment.from_ogg(f'../files/{filename}.ogg')
+    dst = f'./files/{filename}.wav'
+    sound = AudioSegment.from_ogg(f'./files/{filename}.ogg')
     sound.export(dst, format="wav")
 
     r = sr.Recognizer()
