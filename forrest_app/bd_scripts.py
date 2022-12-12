@@ -1,6 +1,7 @@
-from .models import Items
+from .models import Items, BotUser
 
-def to_bd(tokens, user: User):
+
+def to_bd(tokens, user: BotUser) -> None:
     '''-пробегаемся по каждому набору [ключ, значение]
            -проверка есть ли ключ в бд
            -если да

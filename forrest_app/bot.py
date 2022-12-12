@@ -78,27 +78,3 @@ def invalid_message(message: telebot.types.Message) -> None:
         message.chat.id,
         "Простите, я вас не понял. Вы можете посмотреть мои возможности в /help"
     )
-
-
-@bot.message_handler(commands=['start'])
-def start_command(message: telebot.types.Message) -> None:
-    user = BotUser(
-        chat_id = message.chat.id,
-        nickname = message.chat.username,
-        state = BotStates.REGISTRATION.value,
-    )
-    if isinstance(message.chat.first_name, str) and \
-        isinstance(message.chat.last_name, str):
-
-        user.full_name = message.chat.first_name + " " + message.chat.last_name
-        user.state = BotStates.MAIN_MENU.value
-        bot.send_message(
-            message.chat.id,
-            "Здравия желаю! Можете посмотреть функционал в /help"
-        )
-    else:
-        bot.send_message(
-            message.chat.id,
-            "Здравия желаю! Для завершения регистрации, напишите нам своё полное имя"
-        )
-
