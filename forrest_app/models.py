@@ -13,8 +13,7 @@ class BotUser(models.Model):
                                 null=False,
                                 blank=False)
 
-    full_name = models.TextField(verbose_name='ФИО',
-                                 null=False,
+    full_name = models.TextField(verbose_name='ФИО', null=False,
                                  blank=False)
 
     STATES = [
@@ -40,9 +39,16 @@ class BotUser(models.Model):
 
 
 class Items(models.Model):
-     user = models.ForeignKey(to=BotUser,
+    user = models.ForeignKey(to=BotUser,
                               on_delete=models.CASCADE)
-     name = models.CharField(max_length=50)
-     count = models.IntegerField()
+    name = models.CharField(max_length=50)
+    count = models.IntegerField()
 
-     objects = models.Manager()
+    objects = models.Manager()
+    
+    def __str__(self) -> str:
+        return f'{self.name} {self.count}шт'
+
+    class Meta:
+        verbose_name = 'Предмет'
+        verbose_name_plural = 'Предметы'

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import BotUser
+from .models import BotUser, Items
 from .forms import BotUserForm
 
 
@@ -8,3 +8,7 @@ from .forms import BotUserForm
 class BotUserAdmin(admin.ModelAdmin):
     list_display = ('chat_id', 'nickname', 'full_name', 'state')
     form = BotUserForm
+
+@admin.register(Items)
+class BotUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'count')
