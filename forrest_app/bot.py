@@ -3,16 +3,17 @@ import re
 import telebot
 
 from settings import BOT_TOKEN, BotStates
-from .models import BotUser
+from .models import BotUser, Items, ItemsForConfirmation
+import forrest_app.bd_scripts as bd
+from .speech_recognition.audio_processing import audio_processing, to_tokens
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
 
 
-def in_state(state: BotStates) -> bool:
+def in_state(state: BotStates):
     def check(state: BotStates, message: telebot.types.Message):
         user = BotUser.objects.get(chat_id = message.chat.id)
-        return user.state == state
-
+        return user.state == state.value
     return partial(check, state)
 
 @bot.message_handler(commands=['start'])
@@ -40,13 +41,13 @@ def start_command(message: telebot.types.Message) -> None:
     user.save()
 
 
-@bot.message_handler(content_types=['text'], func = in_state(BotStates.REGISTRATION))
+@bot.message_handler(content_types=['text'], func=in_state(BotStates.REGISTRATION))
 def fill_full_name(message: telebot.types.Message) -> None:
     full_name_pattern = re.compile(r"\w+ \w+")
     if full_name_pattern.fullmatch(message.text):
-        user = BotUser.objects.get(chat_id = message.chat.id)
+        user = bd.user(message.chat.id) 
         user.full_name = message.text
-        user.state = BotStates.MAIN_MENU
+        user.state = BotStates.MAIN_MENU.value
         user.save()
 
         bot.send_message(
@@ -59,6 +60,94 @@ def fill_full_name(message: telebot.types.Message) -> None:
             "Кажется, вы написали нам не полное имя, попробуйте еще раз"
         )
 
+@bot.message_handler(commands=['record'], func=in_state(BotStates.MAIN_MENU))
+def start_recording(message: telebot.types.Message) -> None:
+    # TODO: move to bd_scripts
+    user = bd.user(message.chat.id)
+    for item in Items.objects.filter(user = user):
+        item.delete()
+    user.state = BotStates.RECORDING.value
+    user.save()
+
+    bot.send_message(
+        message.chat.id,
+        '''
+        Новая запись начата. 
+        Чтобы добавить предметы отправте голосовое сообщение.
+        Чтобы завершить записывание отправьте /finish.
+        '''
+    )
+
+
+@bot.message_handler(content_types=['voice'], func=in_state(BotStates.RECORDING))
+def process_audio(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+    file_info = bot.get_file(message.voice.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
+        audio_message.write(downloaded_file)
+
+    text = audio_processing(f'{user.chat_id}')
+    items = to_tokens(text)
+
+    for_confirmation = ItemsForConfirmation(user = user, items = items)
+    for_confirmation.save()
+
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Вы перечислили:
+        {items}
+        Всё правильно?(да/нет)
+        '''
+    )
+    user.state = BotStates.CONFIRMATION.value
+    user.save()
+
+@bot.message_handler(content_types=['text'], func=in_state(BotStates.CONFIRMATION))
+def confirm_items(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+    if not message.text.lower() in ['да', 'нет']:
+        bot.send_message(
+            user.chat_id,
+            "Я вас не понял, попробуйте снова"
+        )
+        return
+
+    items = ItemsForConfirmation.objects.get(user = user)
+    reply = '''
+            Хорошо, не будем их записывать, попробуйте снова.
+            Вы можете завершить записывание, написав /finish
+            '''
+    if message.text.lower() == 'да':
+        bd.save_tokens(items.items, user)
+
+        reply = '''
+            Отлично, я записал это в таблицу.
+            Вы можете завершить записывание, написав /finish
+            '''
+    bot.send_message(
+        user.chat_id,
+        reply
+    )
+
+    items.delete()
+    user.state = BotStates.RECORDING.value
+    user.save()
+
+@bot.message_handler(commands=['finish'], func=in_state(BotStates.RECORDING))
+def finish_recording(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+    items = Items.objects.filter(user = user)
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Ваша таблица предметов:
+        {', '.join(map(str, items))}
+        '''
+    )
+    user.state = BotStates.MAIN_MENU.value
+    user.save()
 
 @bot.message_handler(commands=['help'])
 def help_message(message: telebot.types.Message) -> None:
@@ -70,7 +159,7 @@ def help_message(message: telebot.types.Message) -> None:
 
 @bot.message_handler(commands=['state'])
 def print_state(message: telebot.types.Message) -> None:
-    user = BotUser.objects.get(chat_id = message.chat.id)
+    user = bd.user(message.chat.id) 
     bot.send_message(user.chat_id, "You are in " + BotStates(user.state).name)
 
 
