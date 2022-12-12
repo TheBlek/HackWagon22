@@ -8,10 +8,12 @@ from .models import BotUser
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
 
 
-def in_state(state: BotStates, message: telebot.types.Message) -> bool:
-    user = BotUser.objects.get(chat_id = message.chat.id)
-    return user.state == state
+def in_state(state: BotStates) -> bool:
+    def check(state: BotStates, message: telebot.types.Message):
+        user = BotUser.objects.get(chat_id = message.chat.id)
+        return user.state == state
 
+    return partial(check, state)
 
 @bot.message_handler(commands=['start'])
 def start_command(message: telebot.types.Message) -> None:
@@ -27,18 +29,18 @@ def start_command(message: telebot.types.Message) -> None:
         user.state = BotStates.MAIN_MENU.value
         bot.send_message(
             message.chat.id,
-            "Здравия желаю! Можете посмотреть функционал в /help"
+            "Здравствуйте! Можете посмотреть функционал в /help"
         )
     else:
         bot.send_message(
             message.chat.id,
-            "Здравия желаю! Для завершения регистрации, напишите нам своё полное имя"
+            "Здравствуйте! Для завершения регистрации, напишите нам своё полное имя"
         )
 
     user.save()
 
 
-@bot.message_handler(content_types=['text'], func = partial(in_state, BotStates.REGISTRATION))
+@bot.message_handler(content_types=['text'], func = in_state(BotStates.REGISTRATION))
 def fill_full_name(message: telebot.types.Message) -> None:
     full_name_pattern = re.compile(r"\w+ \w+")
     if full_name_pattern.fullmatch(message.text):
