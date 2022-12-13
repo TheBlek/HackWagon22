@@ -70,7 +70,7 @@ def fill_full_name(message: telebot.types.Message) -> None:
 def start_recording(message: telebot.types.Message) -> None:
     # to_do: move to bd_scripts
     user = bd.user(message.chat.id)
-    for item in Items.objects.filter(user = user):
+    for item in Items.objects.filter(user=user):
         item.delete()
     user.state = BotStates.RECORDING.value
     user.save()
@@ -95,7 +95,9 @@ def process_audio(message: telebot.types.Message) -> None:
     text = audio_processing(wav_filename)
     items = to_tokens(text)
 
-    # ItemsForConfirmation.objects.get(user=user).delete()
+    if len(ItemsForConfirmation.objects.filter(user=user)) != 0:
+        ItemsForConfirmation.objects.get(user=user).delete()
+
     for_confirmation = ItemsForConfirmation(user=user, items=items)
     for_confirmation.save()
 
@@ -131,8 +133,7 @@ def confirm_items(message: telebot.types.Message) -> None:
 
         reply = '''
             Отлично, я записал это в таблицу.
-            Вы можете завершить записывание, написав /finish
-            '''
+            Вы можете завершить записывание, написав /finish '''
     bot.send_message(
         user.chat_id,
         reply
@@ -143,10 +144,24 @@ def confirm_items(message: telebot.types.Message) -> None:
     user.save()
 
 
+@bot.message_handler(commands=['check'], func=in_state(BotStates.RECORDING))
+def check_database(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+    items = Items.objects.filter(user=user)
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Ваша таблица предметов на данный момент:
+        {', '.join(map(str, items))}
+        '''
+    )
+    user.save()
+
+
 @bot.message_handler(commands=['finish'], func=in_state(BotStates.RECORDING))
 def finish_recording(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
-    items = Items.objects.filter(user = user)
+    items = Items.objects.filter(user=user)
     bot.send_message(
         message.chat.id,
         f'''
@@ -154,6 +169,9 @@ def finish_recording(message: telebot.types.Message) -> None:
         {', '.join(map(str, items))}
         '''
     )
+
+    frames = bd.to_dataframe(list(items))
+    bd.dataframe_to_excel(frames, str(user.chat_id))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 
@@ -162,7 +180,7 @@ def finish_recording(message: telebot.types.Message) -> None:
 def help_message(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
-        "/record - Начать запись новой таблицы учёта"
+        ''' /record - Начать запись новой таблицы учёта\n/check - Текущее содержимое таблицы учёта '''
     )
 
 
