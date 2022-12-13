@@ -1,19 +1,22 @@
 from functools import partial
 import re
 import telebot
+import forrest_app.bd_scripts as bd
 
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
-import forrest_app.bd_scripts as bd
-from .speech_recognition.audio_processing import audio_processing, to_tokens, ogg_download, ogg_to_wav
+from .speech_recognition.audio_processing import audio_processing, \
+                                                    to_tokens, \
+                                                    ogg_download, \
+                                                    ogg_to_wav
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
 
 
-def in_state(state: BotStates):
-    def check(state: BotStates, message: telebot.types.Message):
-        user = BotUser.objects.get(chat_id = message.chat.id)
+def in_state(state: BotStates) -> partial:
+    def check(state: BotStates, message: telebot.types.Message) -> bool:
+        user = BotUser.objects.get(chat_id=message.chat.id)
         return user.state == state.value
     return partial(check, state)
 
@@ -47,7 +50,7 @@ def start_command(message: telebot.types.Message) -> None:
 def fill_full_name(message: telebot.types.Message) -> None:
     full_name_pattern = re.compile(r"\w+ \w+")
     if full_name_pattern.fullmatch(message.text):
-        user = bd.user(message.chat.id) 
+        user = bd.user(message.chat.id)
         user.full_name = message.text
         user.state = BotStates.MAIN_MENU.value
         user.save()
@@ -65,7 +68,7 @@ def fill_full_name(message: telebot.types.Message) -> None:
 
 @bot.message_handler(commands=['record'], func=in_state(BotStates.MAIN_MENU))
 def start_recording(message: telebot.types.Message) -> None:
-    # TODO: move to bd_scripts
+    # to_do: move to bd_scripts
     user = bd.user(message.chat.id)
     for item in Items.objects.filter(user = user):
         item.delete()
@@ -75,7 +78,7 @@ def start_recording(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         '''
-        Новая запись начата. 
+        Новая запись начата.
         Чтобы добавить предметы отправте голосовое сообщение.
         Чтобы завершить записывание отправьте /finish.
         '''
@@ -92,7 +95,7 @@ def process_audio(message: telebot.types.Message) -> None:
     text = audio_processing(wav_filename)
     items = to_tokens(text)
 
-    ItemsForConfirmation.objects.get(user=user).delete()
+    # ItemsForConfirmation.objects.get(user=user).delete()
     for_confirmation = ItemsForConfirmation(user=user, items=items)
     for_confirmation.save()
 
@@ -165,7 +168,7 @@ def help_message(message: telebot.types.Message) -> None:
 
 @bot.message_handler(commands=['state'])
 def print_state(message: telebot.types.Message) -> None:
-    user = bd.user(message.chat.id) 
+    user = bd.user(message.chat.id)
     bot.send_message(user.chat_id, "You are in " + BotStates(user.state).name)
 
 

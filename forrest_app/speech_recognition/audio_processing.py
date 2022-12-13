@@ -1,11 +1,24 @@
-import speech_recognition as sr
-from pydub import AudioSegment
 import re
 import telebot
+from pydub import AudioSegment
+import speech_recognition as sr
 import forrest_app.bd_scripts as bd
 
 
 def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
+    """ Сохраняет файл ogg и возвращает има файла без пути,
+        чтобы дальше при конвертации не узнавать user.chat_id """
+
+    user = bd.user(message.chat.id)
+    file_info = bot.get_file(message.voice.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
+        audio_message.write(downloaded_file)
+
+    return f'{user.chat_id}'
+
+
+def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     """ Сохраняет файл ogg и возвращает има файла без пути, чтобы дальше при конвертации не узнавать user.chat_id"""
 
     user = bd.user(message.chat.id)
@@ -37,27 +50,27 @@ def mp3_to_wav(filename: str) -> str:
     return f'files/{filename}.wav'
 
 
-def audio_processing(filename: str) -> list:
+def audio_processing(filename: str) -> str:
     """ Берётся файл WAV и конвертируется в текст
         Получает на вход:
                 -название файла
         Возвращает строку:
                 -'апельсины 20 мандарины 13 елочные игрушки 34' """
 
-    r = sr.Recognizer()
+    rec = sr.Recognizer()
     with sr.AudioFile(filename) as source:
         # listen for the data (load audio to memory)
-        audio_data = r.record(source)
+        audio_data = rec.record(source)
         # recognize (convert from speech to text)
-        text = r.recognize_google(audio_data, language="ru-RU")
+        text = rec.recognize_google(audio_data, language="ru-RU")
 
     return text
 
 
 def to_tokens(text: str) -> list:
-    """ Берётся текст и преобразуется в токены
+    """ Берётся list и преобразуется в токены
         Получает на вход:
-                -строка
+                -list
         Возвращает лист листов размера 2 вида [[str, int]]:
                 -[['апельсины', 20], ['мандарины', 13], ['елочные игрушки', 34]]"""
 
