@@ -13,8 +13,7 @@ class BotUser(models.Model):
                                 null=False,
                                 blank=False)
 
-    full_name = models.TextField(verbose_name='ФИО',
-                                 null=False,
+    full_name = models.TextField(verbose_name='ФИО', null=False,
                                  blank=False)
 
     STATES = [

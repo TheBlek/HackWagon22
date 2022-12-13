@@ -134,6 +134,7 @@ def confirm_items(message: telebot.types.Message) -> None:
         reply = '''
             Отлично, я записал это в таблицу.
             Вы можете завершить записывание, написав /finish '''
+
     bot.send_message(
         user.chat_id,
         reply
@@ -162,6 +163,7 @@ def check_database(message: telebot.types.Message) -> None:
 def finish_recording(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
     items = Items.objects.filter(user=user)
+
     bot.send_message(
         message.chat.id,
         f'''
@@ -169,7 +171,7 @@ def finish_recording(message: telebot.types.Message) -> None:
         {', '.join(map(str, items))}
         '''
     )
-
+    
     frames = bd.to_dataframe(list(items))
     bd.dataframe_to_excel(frames, str(user.chat_id))
     user.state = BotStates.MAIN_MENU.value
