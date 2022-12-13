@@ -109,13 +109,14 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-BOT_TOKEN: str = '5723934802:AAHUI1s6HQuFC2xYNiI--VYVKKOz0OT8DuI'  # Egor
+BOT_TOKEN: str = 'Paste_your_token_here'
 
 
 class BotStates(IntEnum):
     REGISTRATION = 0
     MAIN_MENU = 1
     RECORDING = 2
+    CONFIRMATION = 3
 
 
 OPEN_WEATHER_TOKEN: str = '45751c89bc82fb7afa7ca0b2093a88f6'

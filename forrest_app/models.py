@@ -21,6 +21,7 @@ class BotUser(models.Model):
         (BotStates.REGISTRATION.value, BotStates.REGISTRATION.name),
         (BotStates.MAIN_MENU.value, BotStates.MAIN_MENU.name),
         (BotStates.RECORDING.value, BotStates.RECORDING.name),
+        (BotStates.CONFIRMATION.value, BotStates.CONFIRMATION.name),
     ]
 
     state = models.IntegerField(verbose_name='Текущее состояние',
@@ -39,10 +40,21 @@ class BotUser(models.Model):
         verbose_name_plural = 'Пользователи бота'
 
 
-class Items(models.Model):
-     user = models.ForeignKey(to=BotUser,
-                              on_delete=models.CASCADE)
-     name = models.CharField(max_length=50)
-     count = models.IntegerField()
+class ItemsForConfirmation(models.Model):
+    user = models.OneToOneField(to=BotUser,
+                                on_delete=models.CASCADE)
+    items = models.JSONField()
 
-     objects = models.Manager()
+    objects = models.Manager()
+
+
+class Items(models.Model):
+    user = models.ForeignKey(to=BotUser,
+                              on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    count = models.IntegerField()
+
+    objects = models.Manager()
+
+    def __str__(self) -> str:
+        return f'{self.name} {self.count}шт'
