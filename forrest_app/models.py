@@ -20,6 +20,7 @@ class BotUser(models.Model):
         (BotStates.REGISTRATION.value, BotStates.REGISTRATION.name),
         (BotStates.MAIN_MENU.value, BotStates.MAIN_MENU.name),
         (BotStates.RECORDING.value, BotStates.RECORDING.name),
+        (BotStates.CONFIRMATION.value, BotStates.CONFIRMATION.name),
     ]
 
     state = models.IntegerField(verbose_name='Текущее состояние',
@@ -52,3 +53,11 @@ class Items(models.Model):
     class Meta:
         verbose_name = 'Предмет'
         verbose_name_plural = 'Предметы'
+
+class ItemsForConfirmation(models.Model):
+    user = models.OneToOneField(to=BotUser,
+                                on_delete=models.CASCADE)
+    items = models.JSONField()
+
+    objects = models.Manager()
+

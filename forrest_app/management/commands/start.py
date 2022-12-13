@@ -9,4 +9,5 @@ class Command(BaseCommand):
             bot.polling(none_stop=True, interval=5)
         except Exception as _:
             time.sleep(1)
+            print(str(_))
             self.handle()
