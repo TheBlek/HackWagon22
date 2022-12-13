@@ -39,6 +39,14 @@ class BotUser(models.Model):
         verbose_name_plural = 'Пользователи бота'
 
 
+class ItemsForConfirmation(models.Model):
+    user = models.OneToOneField(to=BotUser,
+                                on_delete=models.CASCADE)
+    items = models.JSONField()
+
+    objects = models.Manager()
+
+
 class Items(models.Model):
     user = models.ForeignKey(to=BotUser,
                               on_delete=models.CASCADE)
@@ -49,15 +57,3 @@ class Items(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name} {self.count}шт'
-
-    class Meta:
-        verbose_name = 'Предмет'
-        verbose_name_plural = 'Предметы'
-
-class ItemsForConfirmation(models.Model):
-    user = models.OneToOneField(to=BotUser,
-                                on_delete=models.CASCADE)
-    items = models.JSONField()
-
-    objects = models.Manager()
-

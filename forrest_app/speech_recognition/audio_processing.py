@@ -19,12 +19,13 @@ def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
 
 
 def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл ogg и возвращает има файла без пути, чтобы дальше при конвертации не узнавать user.chat_id"""
+    """ Сохраняет файл mp3 и возвращает има файла без пути,
+        чтобы дальше при конвертации не узнавать user.chat_id """
 
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.voice.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
-    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
+    with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
         audio_message.write(downloaded_file)
 
     return f'{user.chat_id}'
