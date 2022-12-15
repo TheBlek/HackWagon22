@@ -8,7 +8,9 @@ from .models import BotUser, Items, ItemsForConfirmation
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
                                                     ogg_download, \
-                                                    ogg_to_wav
+                                                    ogg_to_wav, \
+                                                    mp3_download, \
+                                                    mp3_to_wav
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -113,6 +115,33 @@ def process_audio(message: telebot.types.Message) -> None:
     user.save()
 
 
+@bot.message_handler(content_types=['document'], func=in_state(BotStates.RECORDING))
+def process_file(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+
+    mp3_filename = mp3_download(bot, message)
+    wav_filename = mp3_to_wav(mp3_filename)
+    text = audio_processing(wav_filename)
+    items = to_tokens(text)
+
+    if len(ItemsForConfirmation.objects.filter(user=user)) != 0:
+        ItemsForConfirmation.objects.get(user=user).delete()
+
+    for_confirmation = ItemsForConfirmation(user=user, items=items)
+    for_confirmation.save()
+
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Вы перечислили:
+        {', '.join(map(str, items))}
+        Всё правильно?(да/нет)
+        '''
+    )
+    user.state = BotStates.CONFIRMATION.value
+    user.save()
+
+
 @bot.message_handler(content_types=['text'], func=in_state(BotStates.CONFIRMATION))
 def confirm_items(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
@@ -171,7 +200,8 @@ def finish_recording(message: telebot.types.Message) -> None:
     )
 
     frames = bd.to_dataframe(list(items))
-    bd.dataframe_to_excel(frames, str(user.chat_id))
+    xlsx_file = bd.dataframe_to_excel(frames, str(user.chat_id))
+    bot.send_document(message.chat.id, open(xlsx_file, 'rb'))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 
