@@ -12,36 +12,11 @@ def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.voice.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
+    print(file_info)
     with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
         audio_message.write(downloaded_file)
 
     return f'{user.chat_id}'
-
-
-def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл MP3 и возвращает има файла без пути,
-        чтобы дальше при конвертации не узнавать user.chat_id """
-
-    user = bd.user(message.chat.id)
-    file_info = bot.get_file(message.audio.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
-        audio_message.write(downloaded_file)
-
-    return f'{user.chat_id}'
-
-
-def wav_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл WAV и возвращает има файла без пути,
-        чтобы дальше при конвертации не узнавать user.chat_id """
-
-    user = bd.user(message.chat.id)
-    file_info = bot.get_file(message.audio.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    with open(f'files/{user.chat_id}.wav', 'wb') as audio_message:
-        audio_message.write(downloaded_file)
-
-    return f'{user.chat_id}.wav'
 
 
 def ogg_to_wav(filename: str) -> str:
@@ -90,7 +65,7 @@ def to_tokens(text: str) -> list:
                  ['боковая рама', 4358973, 43, 1989, 'брак'], ['боковая рама', 4358973, 43, 1989, 'брак'],
                   ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
-    string = a.split("следующий")
+    string = text.split("следующий")
 
     pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментарий\s((\S+\s)+)"
     tokens = []
