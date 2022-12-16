@@ -82,15 +82,15 @@ def to_tokens(text: str) -> list:
         s = tokens[i].split(" ")
 
         detail = s[s.index("деталь") + 1:s.index("номер")]
-        detail = " ".join(detail)
+        detail: str = " ".join(detail)
         number = s[s.index("номер") + 1:s.index("завод")]
-        number = int("".join(number))
+        number: int = int("".join(number))
         zavod = s[s.index("завод") + 1:s.index("год")]
-        zavod = int("".join(zavod))
+        zavod: int = int("".join(zavod))
         year = s[s.index("год") + 1:s.index("комментарий")]
-        year = int("".join(year))
+        year: int = int("".join(year))
         comment = s[s.index("комментарий") + 1:]
-        comment = " ".join(comment)
+        comment: str = " ".join(comment)
         final_tokens.append([detail, number, zavod, year, comment])
 
     return final_tokens
