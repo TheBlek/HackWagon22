@@ -75,33 +75,30 @@ def to_tokens(text: str) -> list:
                   ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
     string = text.split("следующий")
-
-    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментарий\s((\S+\s)+)"
+    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментарий(\s(\S+)+)"
     tokens = []
-    for i in range(len(string)):
-        match = re.fullmatch(pattern, string[i])
+    for i in range(len(tokens)+1):
+        match = re.fullmatch(pattern, string[i].lower())
         if match:
-            tokens.append(string[i])
+            tokens.append(string[i].lower())
 
     for i in range(len(tokens)):
         tokens[i] = tokens[i][:len(tokens[i]) - 1]
-
     final_tokens = []
     for i in range(len(tokens)):
         s = tokens[i].split(" ")
 
         detail = s[s.index("деталь") + 1:s.index("номер")]
-        detail: str = " ".join(detail)
+        detail = " ".join(detail)
         number = s[s.index("номер") + 1:s.index("завод")]
-        number: int = int("".join(number))
+        number = int("".join(number))
         zavod = s[s.index("завод") + 1:s.index("год")]
-        zavod: int = int("".join(zavod))
+        zavod = int("".join(zavod))
         year = s[s.index("год") + 1:s.index("комментарий")]
-        year: int = int("".join(year))
+        year = int("".join(year))
         comment = s[s.index("комментарий") + 1:]
-        comment: str = " ".join(comment)
+        comment = " ".join(comment)
         final_tokens.append([detail, number, zavod, year, comment])
 
-    print(final_tokens)
     return final_tokens
 
