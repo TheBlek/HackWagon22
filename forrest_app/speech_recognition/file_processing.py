@@ -15,23 +15,23 @@ def file_processing(filename: str) -> str:
 
 
 class SplitWavAudioMubin:
-    def __init__(self, folder, filename):
+    def __init__(self, folder: str, filename: str) -> None:
         self.folder = folder
         self.filename = filename
         self.filepath = folder + '/' + filename
 
         self.audio = AudioSegment.from_wav(self.filepath)
 
-    def get_duration(self):
+    def get_duration(self) -> int:
         return self.audio.duration_seconds
 
-    def single_split(self, from_min, to_min, split_filename):
+    def single_split(self, from_min: int, to_min: int, split_filename: str) -> None:
         t1 = from_min * 120 * 1000
         t2 = to_min * 120 * 1000
         split_audio = self.audio[t1:t2]
         split_audio.export(self.folder + '/' + split_filename, format="wav")
 
-    def multiple_split(self, filename, min_per_split):
+    def multiple_split(self, filename: str, min_per_split: int) -> int:
         total_mins = math.ceil(self.get_duration() / 120)
         for i in range(0, total_mins, min_per_split):
             split_fn = str(i) + '_' + f'{filename}'
