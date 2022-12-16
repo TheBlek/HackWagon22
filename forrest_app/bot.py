@@ -5,12 +5,14 @@ import forrest_app.bd_scripts as bd
 
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
+from .speech_recognition.file_processing import file_processing
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
                                                     ogg_download, \
                                                     ogg_to_wav, \
                                                     mp3_download, \
-                                                    mp3_to_wav
+                                                    mp3_to_wav, \
+                                                    wav_download
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -115,13 +117,14 @@ def process_audio(message: telebot.types.Message) -> None:
     user.save()
 
 
-@bot.message_handler(content_types=['document'], func=in_state(BotStates.RECORDING))
+@bot.message_handler(content_types=['audio'], func=in_state(BotStates.RECORDING))
 def process_file(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
 
-    mp3_filename = mp3_download(bot, message)
-    wav_filename = mp3_to_wav(mp3_filename)
-    text = audio_processing(wav_filename)
+    print('обрабатываю')
+    #mp3_filename = mp3_download(bot, message)
+    wav_filename = wav_download(bot, message)
+    text = file_processing(wav_filename)
     items = to_tokens(text)
 
     if len(ItemsForConfirmation.objects.filter(user=user)) != 0:

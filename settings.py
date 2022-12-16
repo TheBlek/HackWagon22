@@ -109,7 +109,7 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-BOT_TOKEN: str = 'your_token'
+BOT_TOKEN: str = 'токен'
 
 
 class BotStates(IntEnum):

@@ -23,12 +23,25 @@ def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
         чтобы дальше при конвертации не узнавать user.chat_id """
 
     user = bd.user(message.chat.id)
-    file_info = bot.get_file(message.document.file_id)
+    file_info = bot.get_file(message.audio.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
     with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
         audio_message.write(downloaded_file)
 
     return f'{user.chat_id}'
+
+
+def wav_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
+    """ Сохраняет файл wav и возвращает има файла без пути,
+        чтобы дальше при конвертации не узнавать user.chat_id """
+
+    user = bd.user(message.chat.id)
+    file_info = bot.get_file(message.audio.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    with open(f'files/{user.chat_id}.wav', 'wb') as audio_message:
+        audio_message.write(downloaded_file)
+
+    return f'{user.chat_id}.wav'
 
 
 def ogg_to_wav(filename: str) -> str:
@@ -38,7 +51,7 @@ def ogg_to_wav(filename: str) -> str:
     sound = AudioSegment.from_ogg(f'files/{filename}.ogg')
     sound.export(dst, format="wav")
 
-    return f'files/{filename}.wav'
+    return f'{filename}.wav'
 
 
 def mp3_to_wav(filename: str) -> str:
@@ -48,7 +61,7 @@ def mp3_to_wav(filename: str) -> str:
     sound = AudioSegment.from_mp3(f'files/{filename}.mp3')
     sound.export(dst, format="wav")
 
-    return f'files/{filename}.wav'
+    return f'{filename}.wav'
 
 
 def audio_processing(filename: str) -> str:
@@ -59,7 +72,7 @@ def audio_processing(filename: str) -> str:
                 -'апельсины 20 мандарины 13 елочные игрушки 34' """
 
     rec = sr.Recognizer()
-    with sr.AudioFile(filename) as source:
+    with sr.AudioFile(f'files/{filename}') as source:
         # listen for the data (load audio to memory)
         audio_data = rec.record(source)
         # recognize (convert from speech to text)
