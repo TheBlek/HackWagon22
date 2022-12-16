@@ -121,9 +121,9 @@ def process_audio(message: telebot.types.Message) -> None:
 def process_file(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
 
-    print('обрабатываю')
-    #mp3_filename = mp3_download(bot, message)
-    wav_filename = wav_download(bot, message)
+    mp3_filename = mp3_download(bot, message)
+    # wav_filename = wav_download(bot, message)
+    wav_filename = mp3_to_wav(mp3_filename)
     text = file_processing(wav_filename)
     items = to_tokens(text)
 

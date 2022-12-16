@@ -6,7 +6,7 @@ import forrest_app.bd_scripts as bd
 
 
 def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл ogg и возвращает има файла без пути,
+    """ Сохраняет файл OGG и возвращает има файла без пути,
         чтобы дальше при конвертации не узнавать user.chat_id """
 
     user = bd.user(message.chat.id)
@@ -19,7 +19,7 @@ def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
 
 
 def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл mp3 и возвращает има файла без пути,
+    """ Сохраняет файл MP3 и возвращает има файла без пути,
         чтобы дальше при конвертации не узнавать user.chat_id """
 
     user = bd.user(message.chat.id)
@@ -32,7 +32,7 @@ def mp3_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
 
 
 def wav_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл wav и возвращает има файла без пути,
+    """ Сохраняет файл WAV и возвращает има файла без пути,
         чтобы дальше при конвертации не узнавать user.chat_id """
 
     user = bd.user(message.chat.id)
