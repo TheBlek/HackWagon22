@@ -85,12 +85,38 @@ def to_tokens(text: str) -> list:
     """ Берётся list и преобразуется в токены
         Получает на вход:
                 -list
-        Возвращает лист листов размера 2 вида [[str, int]]:
-                -[['апельсины', 20], ['мандарины', 13], ['елочные игрушки', 34]]"""
+        Возвращает лист листов размера 2 вида [[str, int, int, int, str]]:
+                -[['боковая рама', 4358973, 43, 1989, 'брак'], ['боковая рама', 4358973, 43, 1989, 'брак'],
+                 ['боковая рама', 4358973, 43, 1989, 'брак'], ['боковая рама', 4358973, 43, 1989, 'брак'],
+                  ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
-    tokens = [list(s) for s in re.findall(r"(\D+\s)(\d+)", text)]
-    for i in range(1, len(tokens)):
-        tokens[i][0] = (tokens[i][0])[1:]
-        tokens[i][1] = int(tokens[i][1])
+    string = a.split("следующий")
 
-    return tokens
+    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментарий\s((\S+\s)+)"
+    tokens = []
+    for i in range(len(string)):
+        match = re.fullmatch(pattern, string[i])
+        if match:
+            tokens.append(string[i])
+
+    for i in range(len(tokens)):
+        tokens[i] = tokens[i][:len(tokens[i]) - 1]
+
+    final_tokens = []
+    for i in range(5):
+        s = tokens[i].split(" ")
+
+        detail = s[s.index("деталь") + 1:s.index("номер")]
+        detail = " ".join(detail)
+        number = s[s.index("номер") + 1:s.index("завод")]
+        number = int("".join(number))
+        zavod = s[s.index("завод") + 1:s.index("год")]
+        zavod = int("".join(zavod))
+        year = s[s.index("год") + 1:s.index("комментарий")]
+        year = int("".join(year))
+        comment = s[s.index("комментарий") + 1:]
+        comment = " ".join(comment)
+        final_tokens.append([detail, number, zavod, year, comment])
+
+    return final_tokens
+
