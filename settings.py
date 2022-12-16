@@ -109,7 +109,7 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-BOT_TOKEN: str = '5921489627:AAHw-CdK_luquCulPdxQHZJeWUDYYnlMc6M'
+BOT_TOKEN: str = '5840488180:AAFr_Zs9Ztj2L-zPWdcT-JHUiE-deiqT3Bg'
 
 
 class BotStates(IntEnum):

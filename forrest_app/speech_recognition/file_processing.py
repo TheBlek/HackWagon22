@@ -3,25 +3,27 @@ import math
 import telebot
 import forrest_app.bd_scripts as bd
 from .audio_processing import audio_processing, \
-                            mp3_to_wav
+                            mp3_to_wav, \
+                            wav_to_wav
 
 
 def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.audio.file_id)
     wav_filename = ""
+    print(file_info.file_path)
+    # downloaded_file = bot.download_file(file_info.file_path)
     if 'mp3' in file_info.file_path:
-        downloaded_file = bot.download_file(file_info.file_path)
-        with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
-            audio_message.write(downloaded_file)
-        wav_filename = mp3_to_wav(f'{user.chat_id}')
+        # with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
+        #    audio_message.write(downloaded_file)
+        wav_filename = mp3_to_wav(f'{file_info.file_path}', user)
     elif 'wav' in file_info.file_path:
-        downloaded_file = bot.download_file(file_info.file_path)
-        with open(f'files/{user.chat_id}.wav', 'wb') as audio_message:
-            audio_message.write(downloaded_file)
-        wav_filename = f'{user.chat_id}.wav'
+        # with open(f'files/{user.chat_id}.wav', 'wb') as audio_message:
+        #     audio_message.write(downloaded_file)
+        wav_filename = wav_to_wav(f'{file_info.file_path}', user)
 
     return wav_filename
+
 
 def separating_and_processing(filename: str) -> str:
     split_wav = SplitWavAudioMubin('files', filename)

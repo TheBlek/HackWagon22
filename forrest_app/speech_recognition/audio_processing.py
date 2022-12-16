@@ -12,31 +12,40 @@ def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.voice.file_id)
     downloaded_file = bot.download_file(file_info.file_path)
-    print(file_info)
     with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
         audio_message.write(downloaded_file)
 
     return f'{user.chat_id}'
 
 
-def ogg_to_wav(filename: str) -> str:
+def ogg_to_wav(filename: str, user) -> str:
     """ Сохраняет OGG как WAV """
 
-    dst = f'files/{filename}.wav'
-    sound = AudioSegment.from_ogg(f'files/{filename}.ogg')
+    dst = f'files/{user.chat_id}.wav'
+    sound = AudioSegment.from_ogg(f'{filename}')
     sound.export(dst, format="wav")
 
-    return f'{filename}.wav'
+    return f'{user.chat_id}.wav'
 
 
-def mp3_to_wav(filename: str) -> str:
+def wav_to_wav(filename: str, user) -> str:
     """ Сохраняет MP3 как WAV """
 
-    dst = f'files/{filename}.wav'
-    sound = AudioSegment.from_mp3(f'files/{filename}.mp3')
+    dst = f'files/{user.chat_id}.wav'
+    sound = AudioSegment.from_wav(f'{filename}')
     sound.export(dst, format="wav")
 
-    return f'{filename}.wav'
+    return f'{user.chat_id}.wav'
+
+
+def mp3_to_wav(filename: str, user) -> str:
+    """ Сохраняет MP3 как WAV """
+
+    dst = f'files/{user.chat_id}.wav'
+    sound = AudioSegment.from_mp3(f'{filename}')
+    sound.export(dst, format="wav")
+
+    return f'{user.chat_id}.wav'
 
 
 def audio_processing(filename: str) -> str:
@@ -78,7 +87,7 @@ def to_tokens(text: str) -> list:
         tokens[i] = tokens[i][:len(tokens[i]) - 1]
 
     final_tokens = []
-    for i in range(5):
+    for i in range(len(tokens)):
         s = tokens[i].split(" ")
 
         detail = s[s.index("деталь") + 1:s.index("номер")]
@@ -93,5 +102,6 @@ def to_tokens(text: str) -> list:
         comment: str = " ".join(comment)
         final_tokens.append([detail, number, zavod, year, comment])
 
+    print(final_tokens)
     return final_tokens
 
