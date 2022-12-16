@@ -75,9 +75,10 @@ def to_tokens(text: str) -> list:
                   ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
     string = text.split("следующий")
-    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментарий(\s(\S+)+)"
+    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментари(и|й)(\s(\S+)+)"
     tokens = []
-    for i in range(len(tokens)+1):
+    for i in range(len(string)):
+        print(string[i].lower())
         match = re.fullmatch(pattern, string[i].lower())
         if match:
             tokens.append(string[i].lower())

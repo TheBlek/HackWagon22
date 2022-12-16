@@ -17,6 +17,7 @@ pydub = "^0.25.1"
 pandas = "^1.5.2"
 SpeechRecognition = "^3.9.0"
 openpyxl = "^3.0.10"
+vosk = "^0.3.45"
 
 [tool.mypy]
 warn_unused_configs = true
