@@ -1,5 +1,5 @@
-from .models import Items, BotUser
 import pandas as pd
+from .models import Items, BotUser
 
 
 def save_tokens(tokens: list, user: BotUser) -> None:
@@ -45,7 +45,7 @@ def to_dataframe(tokens: list) -> pd.DataFrame:
 
 
 def dataframe_to_excel(data_frame: pd.DataFrame, filename: str) -> str:
-    """ Создание xlsx таблицы и вывод названия с путем """
+    """ Создание xlsx таблицы и вывод названия с путем для последующей отправки """
 
     data_frame.to_excel(f'files/{filename}.xlsx')
 

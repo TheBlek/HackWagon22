@@ -1,24 +1,13 @@
 import re
 import telebot
-from pydub import AudioSegment
 import speech_recognition as sr
 import forrest_app.bd_scripts as bd
 
-
-def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
-    """ Сохраняет файл OGG и возвращает има файла без пути,
-        чтобы дальше при конвертации не узнавать user.chat_id """
-
-    user = bd.user(message.chat.id)
-    file_info = bot.get_file(message.voice.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
-        audio_message.write(downloaded_file)
-
-    return f'{user.chat_id}'
+from pydub import AudioSegment
+from ..models import BotUser
 
 
-def ogg_to_wav(filename: str, user) -> str:
+def ogg_to_wav(filename: str, user: BotUser) -> str:
     """ Сохраняет OGG как WAV """
 
     dst = f'files/{user.chat_id}.wav'
@@ -28,7 +17,7 @@ def ogg_to_wav(filename: str, user) -> str:
     return f'{user.chat_id}.wav'
 
 
-def wav_to_wav(filename: str, user) -> str:
+def wav_to_wav(filename: str, user: BotUser) -> str:
     """ Сохраняет MP3 как WAV """
 
     dst = f'files/{user.chat_id}.wav'
@@ -38,7 +27,7 @@ def wav_to_wav(filename: str, user) -> str:
     return f'{user.chat_id}.wav'
 
 
-def mp3_to_wav(filename: str, user) -> str:
+def mp3_to_wav(filename: str, user: BotUser) -> str:
     """ Сохраняет MP3 как WAV """
 
     dst = f'files/{user.chat_id}.wav'
@@ -70,12 +59,19 @@ def to_tokens(text: str) -> list:
         Получает на вход:
                 -list
         Возвращает лист листов размера 2 вида [[str, int, int, int, str]]:
-                -[['боковая рама', 4358973, 43, 1989, 'брак'], ['боковая рама', 4358973, 43, 1989, 'брак'],
-                 ['боковая рама', 4358973, 43, 1989, 'брак'], ['боковая рама', 4358973, 43, 1989, 'брак'],
-                  ['боковая рама', 4358973, 43, 1989, 'брак']]"""
+                -[['боковая рама', 4358973, 43, 1989, 'брак'],
+                ['боковая рама', 4358973, 43, 1989, 'брак'],
+                 ['боковая рама', 4358973, 43, 1989, 'брак'],
+                 ['боковая рама', 4358973, 43, 1989, 'брак'],
+                 ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
+    text = text.replace('следующая', 'следующий')
+    text = text.replace('следующей', 'следующий')
+    text = text.replace('следующих', 'следующий')
+    text = text.replace('следующим', 'следующий')
+    text = text.replace('следующем', 'следующий')
     string = text.split("следующий")
-    pattern = "деталь\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\sгод(\s(\d+))\sкомментари(и|й)(\s(\S+)+)"
+    pattern = "\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\s(год|от)(\s(\d+))\sкомментари(и|й)(\s(\S+)+)"
     tokens = []
     for i in range(len(string)):
         print(string[i].lower())
@@ -89,17 +85,16 @@ def to_tokens(text: str) -> list:
     for i in range(len(tokens)):
         s = tokens[i].split(" ")
 
-        detail = s[s.index("деталь") + 1:s.index("номер")]
-        detail = " ".join(detail)
-        number = s[s.index("номер") + 1:s.index("завод")]
-        number = int("".join(number))
-        zavod = s[s.index("завод") + 1:s.index("год")]
-        zavod = int("".join(zavod))
-        year = s[s.index("год") + 1:s.index("комментарий")]
-        year = int("".join(year))
-        comment = s[s.index("комментарий") + 1:]
-        comment = " ".join(comment)
+        detail_s = s[s.index("деталь") + 1:s.index("номер")]
+        detail = " ".join(detail_s)
+        number_s = s[s.index("номер") + 1:s.index("завод")]
+        number = int("".join(number_s))
+        zavod_s = s[s.index("завод") + 1:s.index("год")]
+        zavod = int("".join(zavod_s))
+        year_s = s[s.index("год") + 1:s.index("комментарий")]
+        year = int("".join(year_s))
+        comment_s = s[s.index("комментарий") + 1:]
+        comment = " ".join(comment_s)
         final_tokens.append([detail, number, zavod, year, comment])
 
     return final_tokens
-
