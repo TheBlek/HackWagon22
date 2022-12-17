@@ -200,8 +200,8 @@ def finish_recording(message: telebot.types.Message) -> None:
     )
 
     frames = bd.to_dataframe(list(items))
-    xlsx_file = bd.dataframe_to_excel(frames, str(user.chat_id))
-    bot.send_document(message.chat.id, open(xlsx_file, 'rb'))
+    csv_file = bd.dataframe_to_excel(frames, str(user.chat_id))
+    bot.send_document(message.chat.id, open(csv_file, 'rb'))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 

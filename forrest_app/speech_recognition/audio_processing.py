@@ -66,11 +66,39 @@ def to_tokens(text: str) -> list:
                  ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
     text = text.replace("\n", "")
+    text = text.replace(",", " ")
     text = text.replace("номер номер", "номер")
     text = text.replace("завод завод", "завод")
-    text = text.replace("от", "год")
+    text = text.replace(" от ", " год ")
+    text = text.replace("вгод", "год")
+    text = text.replace("в год", " год")
     text = text.replace("зовут", "завод")
     text = text.replace("заводке", "завод")
+    text = text.replace("рампа", "рама")
+    text = text.replace("равна", "рама")
+    text = text.replace("да-да-да", "")
+    text = text.replace("вот-вот", "")
+    text = text.replace("  ", " ")
+    text = text.replace(" в ", " ")
+    text = text.replace(" а ", " ")
+    text = text.replace("начало записи", "")
+    text = text.replace(" так ", " ")
+    text = text.replace(" вот ", " ")
+    text = text.replace(" это ", " ")
+    text = text.replace(" ещё ", " ")
+    text = text.replace(" там ", " ")
+    text = text.replace(" запись ", " ")
+    text = text.replace(" первый ", " 1 ")
+    text = text.replace(" второй ", " 2 ")
+    text = text.replace(" третий ", " 3 ")
+    text = text.replace(" четвёртый ", " 4 ")
+    text = text.replace(" пятый ", " 5 ")
+    text = text.replace(" шестой ", " 6 ")
+    text = text.replace(" седьмой ", " 7 ")
+    text = text.replace(" восьмой ", " 8 ")
+    text = text.replace(" девятый ", " 9 ")
+    text = text.replace(" десятый ", " 10 ")
+
     token = text.split("следующ")
 
     for i in range(len(token)):
@@ -80,8 +108,23 @@ def to_tokens(text: str) -> list:
             token[i] = token[i][3:]
         elif token[i][:2] == "ие":
             token[i] = token[i][3:]
+        elif token[i][:2] == "ий":
+            token[i] = token[i][3:]
+        elif token[i][:2] == "их":
+            token[i] = token[i][3:]
+        elif token[i][:2] == "им":
+            token[i] = token[i][3:]
         elif token[i][0] == " ":
             token[i] = token[i][1:]
+
+    truetokens = []
+    longtokens = []
+    mistakentokens = []
+    for i in token:
+        if len(i) < 60:
+            truetokens.append(i)
+        else:
+            longtokens.append(i)
 
     pattern1 = "(.+)номер(.+)завод(.+)год(.+)"
     pattern2 = "деталь(.+)номер(.+)завод(.+)год(.+)"
@@ -89,7 +132,7 @@ def to_tokens(text: str) -> list:
     for tok in token:
         r1 = re.findall(pattern1, tok)
         if r1:
-            res.append(r1[0][0])
+            res.append(list(r1[0]))
 
     print(res)
     return res
