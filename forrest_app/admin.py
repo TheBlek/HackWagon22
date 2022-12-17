@@ -9,6 +9,7 @@ class BotUserAdmin(admin.ModelAdmin):
     list_display = ('chat_id', 'nickname', 'full_name', 'state')
     form = BotUserForm
 
+
 @admin.register(Items)
 class ItemsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'count')
+    list_display = ('user', 'detail', 'number', 'zavod', 'year', 'comment')

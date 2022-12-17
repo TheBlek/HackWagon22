@@ -5,10 +5,12 @@ import forrest_app.bd_scripts as bd
 
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
+from .speech_recognition.file_processing import separating_and_processing, \
+                                                file_download
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
-                                                    ogg_download, \
-                                                    ogg_to_wav
+                                                    ogg_to_wav, \
+                                                    ogg_download
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -91,8 +93,34 @@ def process_audio(message: telebot.types.Message) -> None:
 
     # так как это голосовое, то скачиваем ogg и конвертируем в wav
     ogg_filename = ogg_download(bot, message)
-    wav_filename = ogg_to_wav(ogg_filename)
+    wav_filename = ogg_to_wav(ogg_filename, user)
     text = audio_processing(wav_filename)
+    items = to_tokens(text)
+
+    if len(ItemsForConfirmation.objects.filter(user=user)) != 0:
+        ItemsForConfirmation.objects.get(user=user).delete()
+
+    for_confirmation = ItemsForConfirmation(user=user, items=items)
+    for_confirmation.save()
+
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Вы перечислили:
+        {', '.join(map(str, items))}
+        Всё правильно?(да/нет)
+        '''
+    )
+    user.state = BotStates.CONFIRMATION.value
+    user.save()
+
+
+@bot.message_handler(content_types=['audio'], func=in_state(BotStates.RECORDING))
+def process_file(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+
+    wav_filename = file_download(bot, message)
+    text = separating_and_processing(wav_filename)
     items = to_tokens(text)
 
     if len(ItemsForConfirmation.objects.filter(user=user)) != 0:
@@ -134,7 +162,6 @@ def confirm_items(message: telebot.types.Message) -> None:
         reply = '''
             Отлично, я записал это в таблицу.
             Вы можете завершить записывание, написав /finish '''
-
     bot.send_message(
         user.chat_id,
         reply
@@ -163,7 +190,6 @@ def check_database(message: telebot.types.Message) -> None:
 def finish_recording(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
     items = Items.objects.filter(user=user)
-
     bot.send_message(
         message.chat.id,
         f'''
@@ -171,9 +197,10 @@ def finish_recording(message: telebot.types.Message) -> None:
         {', '.join(map(str, items))}
         '''
     )
-    
+
     frames = bd.to_dataframe(list(items))
-    bd.dataframe_to_excel(frames, str(user.chat_id))
+    xlsx_file = bd.dataframe_to_excel(frames, str(user.chat_id))
+    bot.send_document(message.chat.id, open(xlsx_file, 'rb'))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 
