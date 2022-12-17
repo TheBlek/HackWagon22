@@ -19,7 +19,6 @@ def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.audio.file_id)
     wav_filename = ""
-    print(file_info.file_path)
     # downloaded_file = bot.download_file(file_info.file_path)
     if 'mp3' in file_info.file_path:
         # with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:

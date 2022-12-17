@@ -51,6 +51,7 @@ class ItemsForConfirmation(models.Model):
 class Items(models.Model):
     user = models.ForeignKey(to=BotUser,
                               on_delete=models.CASCADE)
+
     detail = models.CharField(max_length=100)
     number = models.IntegerField()
     zavod = models.IntegerField()

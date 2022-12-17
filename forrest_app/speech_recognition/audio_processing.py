@@ -65,36 +65,31 @@ def to_tokens(text: str) -> list:
                  ['боковая рама', 4358973, 43, 1989, 'брак'],
                  ['боковая рама', 4358973, 43, 1989, 'брак']]"""
 
-    text = text.replace('следующая', 'следующий')
-    text = text.replace('следующей', 'следующий')
-    text = text.replace('следующих', 'следующий')
-    text = text.replace('следующим', 'следующий')
-    text = text.replace('следующем', 'следующий')
-    string = text.split("следующий")
-    pattern = r"\s((\S+\s)+)номер(\s(\S+\s)+)\sзавод(\s(\S+\s)+)\s(год|от)(\s(\S+\s)+)\sкомментари(и|й)(\s(\S+)+)"
-    tokens = []
-    for i in range(len(string)):
-        print(string[i].lower())
-        match = re.fullmatch(pattern, string[i].lower())
-        if match:
-            tokens.append(string[i].lower())
+    text = text.replace("\n", "")
+    text = text.replace("номер номер", "номер")
+    text = text.replace("завод завод", "завод")
+    text = text.replace("от", "год")
+    text = text.replace("зовут", "завод")
+    text = text.replace("заводке", "завод")
+    token = text.split("следующ")
 
-    for i in range(len(tokens)):
-        tokens[i] = tokens[i][:len(tokens[i]) - 1]
-    final_tokens = []
-    for i in range(len(tokens)):
-        s = tokens[i].split(" ")
+    for i in range(len(token)):
+        if token[i][:2] == "ая":
+            token[i] = token[i][3:]
+        elif token[i][:2] == "ее":
+            token[i] = token[i][3:]
+        elif token[i][:2] == "ие":
+            token[i] = token[i][3:]
+        elif token[i][0] == " ":
+            token[i] = token[i][1:]
 
-        detail_s = s[s.index("деталь") + 1:s.index("номер")]
-        detail = " ".join(detail_s)
-        number_s = s[s.index("номер") + 1:s.index("завод")]
-        number = int("".join(number_s))
-        zavod_s = s[s.index("завод") + 1:s.index("год")]
-        zavod = int("".join(zavod_s))
-        year_s = s[s.index("год") + 1:s.index("комментарий")]
-        year = int("".join(year_s))
-        comment_s = s[s.index("комментарий") + 1:]
-        comment = " ".join(comment_s)
-        final_tokens.append([detail, number, zavod, year, comment])
+    pattern1 = "(.+)номер(.+)завод(.+)год(.+)"
+    pattern2 = "деталь(.+)номер(.+)завод(.+)год(.+)"
+    res = []
+    for tok in token:
+        r1 = re.findall(pattern1, tok)
+        if r1:
+            res.append(r1[0][0])
 
-    return final_tokens
+    print(res)
+    return res
