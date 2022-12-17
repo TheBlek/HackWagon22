@@ -1,5 +1,6 @@
 import re
 import speech_recognition as sr
+import os
 
 from pydub import AudioSegment
 from ..models import BotUser
@@ -129,8 +130,8 @@ def to_tokens(text: str) -> list:
     result = []
     pattern1 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\s(((\d+)\s)+)год\s(((\d+)\s)+))"
     everything = re.findall(pattern1, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
+    for match in everything:
+        splited = match.split()
         details = " ".join(splited[:2])
 
         if splited.index("завод") - splited.index("номер") == 2:
@@ -139,9 +140,9 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         if splited.index("год") - splited.index("завод") == 2:
-            zavod = splited[splited.index("завод") + 1]
+            factory = splited[splited.index("завод") + 1]
         else:
-            zavod = "".join(splited[splited.index("завод") + 1:splited.index("год")])
+            factory = "".join(splited[splited.index("завод") + 1:splited.index("год")])
 
         year = splited[splited.index("год") + 1]
 
@@ -152,15 +153,15 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        items = [details, number, zavod, year, comment]
+        items = [details, number, factory, year, comment]
         result.append(items)
         text = text.replace(everything[i][0], "")
 
     pattern2 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)год\s(((\d+)\s)+)завод\s(((\d+)\s)+))"
     everything = re.findall(pattern2, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
-        text = text.replace(everything[i][0], "")
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
         comment = " "
         details = " ".join(splited[:2])
 
@@ -176,13 +177,13 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        zavod = "".join(splited[splited.index("завод") + 1:])
-        items = [details, number, year, zavod, comment]
+        factory = "".join(splited[splited.index("завод") + 1:])
+        items = [details, number, year, factory, comment]
         result.append(items)
     pattern3 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)год\s(((\d+)\s)+)завод)"
     everything = re.findall(pattern3, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
+    for match in everything:
+        splited = match[0].split()
         text = text.replace(everything[i][0], "")
 
         details = " ".join(splited[:2])
@@ -201,14 +202,14 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        zavod = "".join(splited[splited.index("год") + 1:splited.index("завод")])
-        items = [details, number, year, zavod, comment]
+        factory = "".join(splited[splited.index("год") + 1:splited.index("завод")])
+        items = [details, number, year, factory, comment]
         result.append(items)
 
     pattern4 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\sкитай\sгод\s(((\d+)\s)+))"
     everything = re.findall(pattern4, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
+    for match in everything:
+        splited = match[0].split()
         text = text.replace(everything[i][0], "")
         details = " ".join(splited[:2])
         comment = " "
@@ -229,8 +230,8 @@ def to_tokens(text: str) -> list:
 
     pattern5 = "((([ёа-я]+\s){1})номер\s(((\d+)\s)+)завод\s(((\d+)\s)+)год\s(((\d+)\s)+))"
     everything = re.findall(pattern5, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
+    for match in everything:
+        splited = match[0].split()
         details = " ".join(splited[:1])
 
         if splited.index("завод") - splited.index("номер") == 2:
@@ -239,9 +240,9 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         if splited.index("год") - splited.index("завод") == 2:
-            zavod = splited[splited.index("завод") + 1]
+            factory = splited[splited.index("завод") + 1]
         else:
-            zavod = "".join(splited[splited.index("завод") + 1:splited.index("год")])
+            factory = "".join(splited[splited.index("завод") + 1:splited.index("год")])
 
         year = splited[splited.index("год") + 1]
 
@@ -252,15 +253,15 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        items = [details, number, zavod, year, comment]
+        items = [details, number, factory, year, comment]
         result.append(items)
         text = text.replace(everything[i][0], "")
 
     pattern6 = "((([ёа-я]+\s){1})номер\s(((\d+)\s)+)год\s(((\d+)\s)+)завод\s(((\d+)\s)+))"
     everything = re.findall(pattern6, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
-        text = text.replace(everything[i][0], "")
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
         comment = " "
         details = " ".join(splited[:1])
 
@@ -276,15 +277,15 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        zavod = "".join(splited[splited.index("завод") + 1:])
-        items = [details, number, year, zavod, comment]
+        factory = "".join(splited[splited.index("завод") + 1:])
+        items = [details, number, year, factory, comment]
         result.append(items)
 
     pattern7 = "((([ёа-я]+\s){1})номер\s(((\d+)\s)+)год\s(((\d+)\s)+)завод)"
     everything = re.findall(pattern7, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
-        text = text.replace(everything[i][0], "")
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
 
         details = " ".join(splited[:1])
 
@@ -302,15 +303,15 @@ def to_tokens(text: str) -> list:
         if "брак" in splited:
             comment = "брак"
 
-        zavod = "".join(splited[splited.index("год") + 1:splited.index("завод")])
-        items = [details, number, year, zavod, comment]
+        factory = "".join(splited[splited.index("год") + 1:splited.index("завод")])
+        items = [details, number, year, factory, comment]
         result.append(items)
 
     pattern8 = "((([ёа-я]+\s){1})номер\s(((\d+)\s)+)завод\sкитай\sгод\s(((\d+)\s)+))"
     everything = re.findall(pattern8, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
-        text = text.replace(everything[i][0], "")
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
         details = " ".join(splited[:2])
         comment = " "
         if splited.index("завод") - splited.index("номер") == 2:
