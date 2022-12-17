@@ -29,6 +29,22 @@ def recognise_with_threads2(filename: str, begin: int, end: int) -> None:
         res2.append(audio_processing(filename_n))
 
 
+def recognise_with_threads3(filename: str, begin: int, end: int) -> None:
+    global res3
+    res3 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res3.append(audio_processing(filename_n))
+
+
+def recognise_with_threads4(filename: str, begin: int, end: int) -> None:
+    global res4
+    res4 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res4.append(audio_processing(filename_n))
+
+
 def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     """ Помещает файл в нужную нам директорию,
         преобразует в WAV в зависимости от первоначального расширения.
@@ -64,14 +80,20 @@ def separating_and_processing(filename: str) -> str:
     split_wav = SplitWavAudioMubin('files', filename)
     cnt_files = split_wav.multiple_split(filename, min_per_split=1)
     threads = list()
-    thread_1 = threading.Thread(target=recognise_with_threads1(filename, 0, cnt_files//2))
+    thread_1 = threading.Thread(target=recognise_with_threads1, args=(filename, 0, cnt_files//4))
     threads.append(thread_1)
     thread_1.start()
-    thread_2 = threading.Thread(target=recognise_with_threads2(filename, cnt_files//2, cnt_files))
+    thread_2 = threading.Thread(target=recognise_with_threads2, args=(filename, cnt_files//4, cnt_files//2))
     threads.append(thread_2)
     thread_2.start()
+    thread_3 = threading.Thread(target=recognise_with_threads3, args=(filename, cnt_files//2, 3*(cnt_files//4)))
+    threads.append(thread_3)
+    thread_3.start()
+    thread_4 = threading.Thread(target=recognise_with_threads4, args=(filename, 3*(cnt_files//4), cnt_files))
+    threads.append(thread_4)
+    thread_4.start()
 
-    global res1, res2
+    global res1, res2, res3, res4
 
     for thr in threads:
         thr.join()
@@ -80,7 +102,12 @@ def separating_and_processing(filename: str) -> str:
         res.append(elem)
     for elem in res2:
         res.append(elem)
+    for elem in res3:
+        res.append(elem)
+    for elem in res4:
+        res.append(elem)
 
+    print(' '.join(res))
     return ' '.join(res)
 
 

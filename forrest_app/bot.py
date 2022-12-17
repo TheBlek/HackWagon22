@@ -81,8 +81,8 @@ def start_recording(message: telebot.types.Message) -> None:
         message.chat.id,
         '''
         Новая запись начата.
-        Чтобы добавить предметы отправте голосовое сообщение.
-        Чтобы завершить записывание отправьте /finish.
+        Чтобы добавить предметы отправте голосовое сообщение или аудиофайл.
+        Чтобы завершить запись отправьте /finish.
         '''
     )
 
@@ -133,7 +133,6 @@ def process_file(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        
         Записываем?(да/нет)
         '''
     )
@@ -161,7 +160,7 @@ def confirm_items(message: telebot.types.Message) -> None:
 
         reply = '''
             Отлично, я записал это в таблицу.
-            Вы можете завершить записывание, написав /finish '''
+            Вы можете завершить запись, написав /finish '''
 
     bot.send_message(
         user.chat_id,
@@ -194,7 +193,7 @@ def finish_recording(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        Ваша таблица предметов:
+        Ваша итоговая таблица предметов:
         {', '.join(map(str, items))}
         '''
     )

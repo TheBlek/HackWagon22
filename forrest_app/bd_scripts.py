@@ -17,7 +17,7 @@ def save_tokens(tokens: list, user: BotUser) -> None:
               number=value_from_voice[1],
               zavod=value_from_voice[2],
               year=value_from_voice[3],
-              comment=' ').save()
+              comment=value_from_voice[4]).save()
 
 
 def to_dataframe(tokens: list) -> pd.DataFrame:
@@ -33,7 +33,7 @@ def to_dataframe(tokens: list) -> pd.DataFrame:
                                   'номер': [token.number],
                                   'год': [token.year],
                                   'завод': [token.zavod],
-                                  'комментарий': ['']})
+                                  'комментарий': [token.comment]})
         data_frame = pd.concat([data_frame, new_frame], ignore_index=True)
 
     return data_frame
