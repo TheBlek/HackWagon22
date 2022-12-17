@@ -345,10 +345,16 @@ def to_tokens(text: str) -> list:
 
     pattern4 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\sкитай\sгод\s(((\d+)\s)+))"
     everything = re.findall(pattern4, text)
+<<<<<<< HEAD
     print(44444444444444444444444444444444)
     for i in range(len(everything)):
         splited = everything[i][0].split()
         text = text.replace(everything[i][0], "")
+=======
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
+>>>>>>> 9d67075 (typo)
         details = " ".join(splited[:2])
         comment = " "
         if splited.index("завод") - splited.index("номер") == 2:
