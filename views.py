@@ -15,4 +15,5 @@ def process_update(request):
     else:
         return HttpResponse('Method Not Allowed', 405)
 
+bot.remove_webhook()
 bot.set_webhook(url=f'hackathon.h1km4t1ll0.space/{BOT_TOKEN}')
