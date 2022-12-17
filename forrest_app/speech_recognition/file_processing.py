@@ -1,10 +1,32 @@
 from pydub import AudioSegment
 import math
 import telebot
+import threading
 import forrest_app.bd_scripts as bd
 from .audio_processing import audio_processing, \
                             mp3_to_wav, \
                             wav_to_wav
+
+res1 = []
+res2 = []
+res3 = []
+res4 = []
+
+
+def recognise_with_threads1(filename: str, begin: int, end: int) -> None:
+    global res1
+    res1 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res1.append(audio_processing(filename_n))
+
+
+def recognise_with_threads2(filename: str, begin: int, end: int) -> None:
+    global res2
+    res2 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res2.append(audio_processing(filename_n))
 
 
 def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
@@ -38,12 +60,26 @@ def separating_and_processing(filename: str) -> str:
                 -имя файла
         Возвращает строку - распознанный текст. """
 
+    res = []
     split_wav = SplitWavAudioMubin('files', filename)
     cnt_files = split_wav.multiple_split(filename, min_per_split=1)
-    res = []
-    for i in range(cnt_files):
-        filename_n = str(i) + f'_{filename}'
-        res.append(audio_processing(filename_n))
+    threads = list()
+    thread_1 = threading.Thread(target=recognise_with_threads1(filename, 0, cnt_files//2))
+    threads.append(thread_1)
+    thread_1.start()
+    thread_2 = threading.Thread(target=recognise_with_threads2(filename, cnt_files//2, cnt_files))
+    threads.append(thread_2)
+    thread_2.start()
+
+    global res1, res2
+
+    for thr in threads:
+        thr.join()
+
+    for elem in res1:
+        res.append(elem)
+    for elem in res2:
+        res.append(elem)
 
     return ' '.join(res)
 

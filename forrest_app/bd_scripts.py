@@ -16,21 +16,24 @@ def save_tokens(tokens: list, user: BotUser) -> None:
               detail=value_from_voice[0],
               number=value_from_voice[1],
               zavod=value_from_voice[2],
-              year=value_from_voice[3]).save()
+              year=value_from_voice[3],
+              comment=' ').save()
 
 
 def to_dataframe(tokens: list) -> pd.DataFrame:
     """ Преобразуем список Item`ов в Pandas.DataFrame """
 
-    data_frame = pd.DataFrame({'Деталь': [],
-                              'Номер детали': [],
-                              'Завод': [],
-                               'Год': []})
+    data_frame = pd.DataFrame({'наименование': [],
+                               'номер': [],
+                               'год': [],
+                               'завод': [],
+                               'комментарий': []})
     for token in tokens:
-        new_frame = pd.DataFrame({'Деталь': [token.detail],
-                                  'Номер детали': [token.number],
-                                  'Завод': [token.zavod],
-                                  'Год': [token.year]})
+        new_frame = pd.DataFrame({'наименование': [token.detail],
+                                  'номер': [token.number],
+                                  'год': [token.year],
+                                  'завод': [token.zavod],
+                                  'комментарий': ['']})
         data_frame = pd.concat([data_frame, new_frame], ignore_index=True)
 
     return data_frame

@@ -133,9 +133,8 @@ def process_file(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        Вы перечислили:
-        {', '.join(map(str, items))}
-        Всё правильно?(да/нет)
+        
+        Записываем?(да/нет)
         '''
     )
     user.state = BotStates.CONFIRMATION.value
@@ -163,6 +162,7 @@ def confirm_items(message: telebot.types.Message) -> None:
         reply = '''
             Отлично, я записал это в таблицу.
             Вы можете завершить записывание, написав /finish '''
+
     bot.send_message(
         user.chat_id,
         reply
