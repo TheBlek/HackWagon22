@@ -12,4 +12,4 @@ class BotUserAdmin(admin.ModelAdmin):
 
 @admin.register(Items)
 class ItemsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'detail', 'number', 'zavod', 'year', 'comment')
+    list_display = ('user', 'detail', 'number', 'zavod', 'year')

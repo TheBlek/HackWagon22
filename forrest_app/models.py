@@ -56,9 +56,9 @@ class Items(models.Model):
     number = models.IntegerField()
     zavod = models.IntegerField()
     year = models.IntegerField()
-    comment = models.CharField(max_length=100)
+    # comment = models.CharField(max_length=100)
 
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return f'{self.detail} {self.number} {self.zavod} {self.year} {self.comment}'
+        return f'{self.detail} {self.number} {self.zavod} {self.year}'
