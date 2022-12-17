@@ -242,9 +242,9 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         if splited.index("год") - splited.index("завод") == 2:
-            factory = splited[splited.index("завод") + 1]
+            zavod = splited[splited.index("завод") + 1]
         else:
-            factory = "".join(splited[splited.index("завод") + 1:splited.index("год")])
+            zavod = "".join(splited[splited.index("завод") + 1:splited.index("год")])
 
         year = splited[splited.index("год") + 1]
 
@@ -535,3 +535,5 @@ def normalized_year(year: str) -> str:
             year = '20' + year
         elif int(year) < 100:
             year = '19' + year
+
+    return year
