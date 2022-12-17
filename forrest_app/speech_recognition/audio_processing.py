@@ -1,5 +1,6 @@
 import re
 import speech_recognition as sr
+import os
 
 from pydub import AudioSegment
 from ..models import BotUser
@@ -37,6 +38,7 @@ def mp3_to_wav(filename: str, user: BotUser) -> str:
 
 def audio_processing(filename: str) -> str:
     """ Берётся файл WAV и конвертируется в текст
+        Удаляет файл по-итогу
         Получает на вход:
                 -название файла
         Возвращает строку:
@@ -48,6 +50,7 @@ def audio_processing(filename: str) -> str:
         audio_data = rec.record(source)
         # recognize (convert from speech to text)
         text = rec.recognize_google(audio_data, language="ru-RU")
+    os.remove(f'files/{filename}')
 
     return text
 
@@ -239,20 +242,23 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         if splited.index("год") - splited.index("завод") == 2:
-            zavod = splited[splited.index("завод") + 1]
+            factory = splited[splited.index("завод") + 1]
         else:
-            zavod = "".join(splited[splited.index("завод") + 1:splited.index("год")])
+            factory = "".join(splited[splited.index("завод") + 1:splited.index("год")])
 
         year = splited[splited.index("год") + 1]
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         comment = " "
 
@@ -264,12 +270,12 @@ def to_tokens(text: str) -> list:
         result.append(items)
         text = text.replace(everything[i][0], "")
 
-    print(2222222222222222)
     pattern2 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)год\s(((\d+)\s)+)завод\s(((\d+)\s)+))"
     everything = re.findall(pattern2, text)
-    for i in range(len(everything)):
-        splited = everything[i][0].split()
-        text = text.replace(everything[i][0], "")
+    print(2222222222222222)
+    for match in everything:
+        splited = match[0].split()
+        text = text.replace(match[0], "")
         comment = " "
         details = " ".join(splited[:2])
 
@@ -281,13 +287,16 @@ def to_tokens(text: str) -> list:
         year = "".join(splited[splited.index("год") + 1])
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         if "брак" in splited:
             comment = "брак"
@@ -313,13 +322,16 @@ def to_tokens(text: str) -> list:
             year = splited[splited.index("год") - 1]
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         comment = " "
 
@@ -347,13 +359,16 @@ def to_tokens(text: str) -> list:
         year = splited[splited.index("год") + 1]
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         if "брак" in splited:
             comment = "брак"
@@ -375,27 +390,30 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         if splited.index("год") - splited.index("завод") == 2:
-            zavod = splited[splited.index("завод") + 1]
+            factory = splited[splited.index("завод") + 1]
         else:
-            zavod = "".join(splited[splited.index("завод") + 1:splited.index("год")])
+            factory = "".join(splited[splited.index("завод") + 1:splited.index("год")])
 
         year = splited[splited.index("год") + 1]
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         comment = " "
 
         if "брак" in splited:
             comment = "брак"
 
-        items = [details, number, zavod, year, comment]
+        items = [details, number, factory, year, comment]
         result.append(items)
         print(items)
         text = text.replace(everything[i][0], "")
@@ -453,13 +471,16 @@ def to_tokens(text: str) -> list:
             year = splited[splited.index("год") - 1]
 
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         comment = " "
 
@@ -485,15 +506,17 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("завод")])
 
         year = splited[splited.index("год") + 1]
-
         if "год" in splited:
-            if len(year) == 1:
-                year = '200' + year
-            else:
-                if int(year) < 50:
-                    year = '20' + year
-                elif int(year) < 100:
-                    year = '19' + year
+            try:
+                if len(year) == 1:
+                    year = '200' + year
+                else:
+                    if int(year) < 50:
+                        year = '20' + year
+                    elif int(year) < 100:
+                        year = '19' + year
+            except Exception as e:
+                pass
 
         if "брак" in splited:
             comment = "брак"
@@ -502,3 +525,13 @@ def to_tokens(text: str) -> list:
         print(items)
         result.append(items)
     return result
+
+
+def normalized_year(year: str) -> str:
+    if len(year) == 1:
+        year = '200' + year
+    else:
+        if int(year) < 50:
+            year = '20' + year
+        elif int(year) < 100:
+            year = '19' + year
