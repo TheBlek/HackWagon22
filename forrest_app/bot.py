@@ -72,8 +72,8 @@ def fill_full_name(message: telebot.types.Message) -> None:
 def start_recording(message: telebot.types.Message) -> None:
     # to_do: move to bd_scripts
     user = bd.user(message.chat.id)
-    # for item in Items.objects.filter(user=user):
-    #     item.delete()
+    for item in Items.objects.filter(user=user):
+        item.delete()
     user.state = BotStates.RECORDING.value
     user.save()
 

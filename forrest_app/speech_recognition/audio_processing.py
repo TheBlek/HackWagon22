@@ -71,7 +71,7 @@ def to_tokens(text: str) -> list:
     text = text.replace('следующим', 'следующий')
     text = text.replace('следующем', 'следующий')
     string = text.split("следующий")
-    pattern = "\s((\S+\s)+)номер(\s(\d+))\sзавод(\s(\d+))\s(год|от)(\s(\d+))\sкомментари(и|й)(\s(\S+)+)"
+    pattern = r"\s((\S+\s)+)номер(\s(\S+\s)+)\sзавод(\s(\S+\s)+)\s(год|от)(\s(\S+\s)+)\sкомментари(и|й)(\s(\S+)+)"
     tokens = []
     for i in range(len(string)):
         print(string[i].lower())
