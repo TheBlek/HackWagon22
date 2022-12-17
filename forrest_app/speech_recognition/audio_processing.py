@@ -37,6 +37,7 @@ def mp3_to_wav(filename: str, user: BotUser) -> str:
 
 def audio_processing(filename: str) -> str:
     """ Берётся файл WAV и конвертируется в текст
+        Удаляет файл по-итогу
         Получает на вход:
                 -название файла
         Возвращает строку:
@@ -48,6 +49,7 @@ def audio_processing(filename: str) -> str:
         audio_data = rec.record(source)
         # recognize (convert from speech to text)
         text = rec.recognize_google(audio_data, language="ru-RU")
+    os.remove(f'files/{filename}')
 
     return text
 
@@ -143,13 +145,7 @@ def to_tokens(text: str) -> list:
 
         year = splited[splited.index("год") + 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         comment = " "
 
@@ -175,13 +171,7 @@ def to_tokens(text: str) -> list:
 
         year = "".join(splited[splited.index("год") + 1])
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         if "брак" in splited:
             comment = "брак"
@@ -204,13 +194,7 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("год") - 1])
             year = splited[splited.index("год") - 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         comment = " "
 
@@ -235,13 +219,7 @@ def to_tokens(text: str) -> list:
 
         year = splited[splited.index("год") + 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         if "брак" in splited:
             comment = "брак"
@@ -267,13 +245,7 @@ def to_tokens(text: str) -> list:
 
         year = splited[splited.index("год") + 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         comment = " "
 
@@ -299,13 +271,7 @@ def to_tokens(text: str) -> list:
 
         year = "".join(splited[splited.index("год") + 1])
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         if "брак" in splited:
             comment = "брак"
@@ -329,13 +295,7 @@ def to_tokens(text: str) -> list:
             number = "".join(splited[splited.index("номер") + 1:splited.index("год") - 1])
             year = splited[splited.index("год") - 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         comment = " "
 
@@ -360,13 +320,7 @@ def to_tokens(text: str) -> list:
 
         year = splited[splited.index("год") + 1]
 
-        if len(year) == 1:
-            year = '200' + year
-        else:
-            if int(year) < 50:
-                year = '20' + year
-            elif int(year) < 100:
-                year = '19' + year
+        year = normalized_year(year)
 
         if "брак" in splited:
             comment = "брак"
@@ -376,3 +330,13 @@ def to_tokens(text: str) -> list:
 
     print(result)
     return result
+
+
+def normalized_year(year: str) -> str:
+    if len(year) == 1:
+        year = '200' + year
+    else:
+        if int(year) < 50:
+            year = '20' + year
+        elif int(year) < 100:
+            year = '19' + year
