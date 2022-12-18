@@ -9,8 +9,7 @@ from .speech_recognition.file_processing import separating_and_processing, \
                                                 file_download
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
-                                                    ogg_to_wav, \
-                                                    ogg_download
+                                                    ogg_to_wav
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -81,8 +80,8 @@ def start_recording(message: telebot.types.Message) -> None:
         message.chat.id,
         '''
         Новая запись начата.
-        Чтобы добавить предметы отправте голосовое сообщение.
-        Чтобы завершить записывание отправьте /finish.
+        Чтобы добавить предметы отправьте голосовое сообщение или аудиофайл.
+        Чтобы завершить запись отправьте /finish.
         '''
     )
 
@@ -91,9 +90,10 @@ def start_recording(message: telebot.types.Message) -> None:
 def process_audio(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
 
+    file_info = bot.get_file(message.voice.file_id)
     # так как это голосовое, то скачиваем ogg и конвертируем в wav
-    ogg_filename = ogg_download(bot, message)
-    wav_filename = ogg_to_wav(ogg_filename, user)
+    # ogg_filename = ogg_download(bot, message)
+    wav_filename = ogg_to_wav(file_info.file_path, user)
     text = audio_processing(wav_filename)
     items = to_tokens(text)
 
@@ -132,9 +132,7 @@ def process_file(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        Вы перечислили:
-        {', '.join(map(str, items))}
-        Всё правильно?(да/нет)
+        Записываем?(да/нет)
         '''
     )
     user.state = BotStates.CONFIRMATION.value
@@ -154,14 +152,15 @@ def confirm_items(message: telebot.types.Message) -> None:
     items = ItemsForConfirmation.objects.get(user=user)
     reply = '''
             Хорошо, не будем их записывать, попробуйте снова.
-            Вы можете завершить записывание, написав /finish
+            Вы можете завершить запись, написав /finish
             '''
     if message.text.lower() == 'да':
         bd.save_tokens(items.items, user)
 
         reply = '''
             Отлично, я записал это в таблицу.
-            Вы можете завершить записывание, написав /finish '''
+            Вы можете завершить запись с помощью команды /finish '''
+
     bot.send_message(
         user.chat_id,
         reply
@@ -193,14 +192,13 @@ def finish_recording(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        Ваша таблица предметов:
-        {', '.join(map(str, items))}
+        Отправляю вам результат инвентаризации...
         '''
     )
 
     frames = bd.to_dataframe(list(items))
-    xlsx_file = bd.dataframe_to_excel(frames, str(user.chat_id))
-    bot.send_document(message.chat.id, open(xlsx_file, 'rb'))
+    csv_file = bd.dataframe_to_excel(frames, str(user.chat_id))
+    bot.send_document(message.chat.id, open(csv_file, 'rb'))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 

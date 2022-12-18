@@ -1,9 +1,48 @@
 from pydub import AudioSegment
 import math
 import telebot
+import threading
 import forrest_app.bd_scripts as bd
 from .audio_processing import audio_processing, \
-                            mp3_to_wav
+                            mp3_to_wav, \
+                            wav_to_wav
+
+res1 = []
+res2 = []
+res3 = []
+res4 = []
+
+
+def recognise_with_threads1(filename: str, begin: int, end: int) -> None:
+    global res1
+    res1 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res1.append(audio_processing(filename_n))
+
+
+def recognise_with_threads2(filename: str, begin: int, end: int) -> None:
+    global res2
+    res2 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res2.append(audio_processing(filename_n))
+
+
+def recognise_with_threads3(filename: str, begin: int, end: int) -> None:
+    global res3
+    res3 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res3.append(audio_processing(filename_n))
+
+
+def recognise_with_threads4(filename: str, begin: int, end: int) -> None:
+    global res4
+    res4 = []
+    for i in range(begin, end):
+        filename_n = str(i) + f'_{filename}'
+        res4.append(audio_processing(filename_n))
 
 
 def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
@@ -18,16 +57,15 @@ def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
     user = bd.user(message.chat.id)
     file_info = bot.get_file(message.audio.file_id)
     wav_filename = ""
-    downloaded_file = bot.download_file(file_info.file_path)
+    # downloaded_file = bot.download_file(file_info.file_path)
     if 'mp3' in file_info.file_path:
-        with open(f'{user.chat_id}.mp3', 'wb') as audio_message:
-            audio_message.write(downloaded_file)
-        wav_filename = mp3_to_wav(f'{user.chat_id}.mp3', user)
+        # with open(f'files/{user.chat_id}.mp3', 'wb') as audio_message:
+        #    audio_message.write(downloaded_file)
+        wav_filename = mp3_to_wav(f'{file_info.file_path}', user)
     elif 'wav' in file_info.file_path:
-        with open(f'{user.chat_id}.wav', 'wb') as audio_message:
-            audio_message.write(downloaded_file)
-        wav_filename = f'{user.chat_id}.wav'
-
+        # with open(f'files/{user.chat_id}.wav', 'wb') as audio_message:
+        #     audio_message.write(downloaded_file)
+        wav_filename = wav_to_wav(f'{file_info.file_path}', user)
     return wav_filename
 
 
@@ -37,13 +75,38 @@ def separating_and_processing(filename: str) -> str:
                 -имя файла
         Возвращает строку - распознанный текст. """
 
-    split_wav = SplitWavAudioMubin("", filename)
-    cnt_files = split_wav.multiple_split(filename, min_per_split=1)
     res = []
-    for i in range(cnt_files):
-        filename_n = str(i) + f'_{filename}'
-        res.append(audio_processing(filename_n))
+    split_wav = SplitWavAudioMubin('files', filename)
+    cnt_files = split_wav.multiple_split(filename, min_per_split=1)
+    threads = list()
+    thread_1 = threading.Thread(target=recognise_with_threads1, args=(filename, 0, cnt_files//4))
+    threads.append(thread_1)
+    thread_1.start()
+    thread_2 = threading.Thread(target=recognise_with_threads2, args=(filename, cnt_files//4, cnt_files//2))
+    threads.append(thread_2)
+    thread_2.start()
+    thread_3 = threading.Thread(target=recognise_with_threads3, args=(filename, cnt_files//2, 3*(cnt_files//4)))
+    threads.append(thread_3)
+    thread_3.start()
+    thread_4 = threading.Thread(target=recognise_with_threads4, args=(filename, 3*(cnt_files//4), cnt_files))
+    threads.append(thread_4)
+    thread_4.start()
 
+    global res1, res2, res3, res4
+
+    for thr in threads:
+        thr.join()
+
+    for elem in res1:
+        res.append(elem)
+    for elem in res2:
+        res.append(elem)
+    for elem in res3:
+        res.append(elem)
+    for elem in res4:
+        res.append(elem)
+
+    print(' '.join(res))
     return ' '.join(res)
 
 
@@ -51,7 +114,7 @@ class SplitWavAudioMubin:
     def __init__(self, folder: str, filename: str) -> None:
         self.folder = folder
         self.filename = filename
-        self.filepath = folder + filename
+        self.filepath = folder + '/' + filename
 
         self.audio = AudioSegment.from_wav(self.filepath)
 
@@ -62,7 +125,7 @@ class SplitWavAudioMubin:
         time_1 = from_min * 120 * 1000
         time_2 = to_min * 120 * 1000
         split_audio = self.audio[time_1:time_2]
-        split_audio.export(self.folder + split_filename, format="wav")
+        split_audio.export(self.folder + '/' + split_filename, format="wav")
 
     def multiple_split(self, filename: str, min_per_split: int) -> int:
         """ Режет аудио:
