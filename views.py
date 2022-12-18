@@ -1,4 +1,3 @@
-import django.template
 import telebot
 from forrest_app.bot import bot
 from django.http import HttpResponse
