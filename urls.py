@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from views import run
-
+from views import process_update
+from settings import BOT_TOKEN
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('start', run)
+    path(f'{BOT_TOKEN}', process_update)
 ]

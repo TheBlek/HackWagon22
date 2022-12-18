@@ -25,12 +25,13 @@ SECRET_KEY: str = 'django-insecure-3qq3th+936qw3j6m=-4ui*5zi+=*w5bnnxrb3-a6#*!a8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG: bool = True
 
-ALLOWED_HOSTS: list[str] = []
+ALLOWED_HOSTS: list[str] = ["h1km4t1ll0.space", 'hackathon.h1km4t1ll0.space', '0.0.0.0', '192.168.0.28', '192.168.0.113',  '127.0.0.1', '31.173.240.248']
+CSRF_TRUSTED_ORIGINS: list[str] = ['https://hackathon.h1km4t1ll0.space', 'https://h1km4t1ll0.space']
 
 # Application definition
 
 INSTALLED_APPS: list[str] = [
-    'jazzmin',
+   # 'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -109,7 +110,7 @@ USE_I18N: bool = True
 
 USE_TZ: bool = True
 
-BOT_TOKEN: str = 'Paste_your_token_here'
+BOT_TOKEN: str = '5723934802:AAHUI1s6HQuFC2xYNiI--VYVKKOz0OT8DuI'
 
 
 class BotStates(IntEnum):
@@ -124,7 +125,8 @@ OPEN_WEATHER_TOKEN: str = '45751c89bc82fb7afa7ca0b2093a88f6'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL: str = 'static/'
+STATIC_URL: str = '/static/'
+STATIC_ROOT: str = '/srv/hackathon/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

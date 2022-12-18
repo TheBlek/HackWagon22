@@ -13,7 +13,8 @@ class BotUser(models.Model):
                                 null=False,
                                 blank=False)
 
-    full_name = models.TextField(verbose_name='ФИО', null=False,
+    full_name = models.TextField(verbose_name='ФИО',
+                                 null=False,
                                  blank=False)
 
     STATES = [
@@ -50,10 +51,14 @@ class ItemsForConfirmation(models.Model):
 class Items(models.Model):
     user = models.ForeignKey(to=BotUser,
                               on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    count = models.IntegerField()
+
+    detail = models.CharField(max_length=100)
+    number = models.CharField(max_length=100)
+    zavod = models.CharField(max_length=100)
+    year = models.CharField(max_length=100)
+    comment = models.CharField(max_length=100)
 
     objects = models.Manager()
 
     def __str__(self) -> str:
-        return f'{self.name} {self.count}шт'
+        return f'{self.detail} {self.number} {self.zavod} {self.year} {self.comment}'

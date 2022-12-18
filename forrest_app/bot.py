@@ -3,12 +3,15 @@ import re
 import telebot
 import forrest_app.bd_scripts as bd
 
+from .keyboards import Keyboard
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
+from .speech_recognition.file_processing import separating_and_processing, \
+                                                file_download
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
-                                                    ogg_download, \
-                                                    ogg_to_wav
+                                                    ogg_to_wav, \
+                                                    ogg_download
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -79,8 +82,8 @@ def start_recording(message: telebot.types.Message) -> None:
         message.chat.id,
         '''
         Новая запись начата.
-        Чтобы добавить предметы отправте голосовое сообщение.
-        Чтобы завершить записывание отправьте /finish.
+        Чтобы добавить предметы отправьте голосовое сообщение или аудиофайл.
+        Чтобы завершить запись отправьте /finish.
         '''
     )
 
@@ -91,7 +94,7 @@ def process_audio(message: telebot.types.Message) -> None:
 
     # так как это голосовое, то скачиваем ogg и конвертируем в wav
     ogg_filename = ogg_download(bot, message)
-    wav_filename = ogg_to_wav(ogg_filename)
+    wav_filename = ogg_to_wav(ogg_filename, user)
     text = audio_processing(wav_filename)
     items = to_tokens(text)
 
@@ -107,7 +110,33 @@ def process_audio(message: telebot.types.Message) -> None:
         Вы перечислили:
         {', '.join(map(str, items))}
         Всё правильно?(да/нет)
-        '''
+        ''',
+        reply_markup=Keyboard(['Да', 'Нет'])
+    )
+    user.state = BotStates.CONFIRMATION.value
+    user.save()
+
+
+@bot.message_handler(content_types=['audio'], func=in_state(BotStates.RECORDING))
+def process_file(message: telebot.types.Message) -> None:
+    user = bd.user(message.chat.id)
+
+    wav_filename = file_download(bot, message)
+    text = separating_and_processing(wav_filename)
+    items = to_tokens(text)
+
+    if len(ItemsForConfirmation.objects.filter(user=user)) != 0:
+        ItemsForConfirmation.objects.get(user=user).delete()
+
+    for_confirmation = ItemsForConfirmation(user=user, items=items)
+    for_confirmation.save()
+
+    bot.send_message(
+        message.chat.id,
+        f'''
+        Записываем?(да/нет)
+        ''',
+        reply_markup=Keyboard(['Да', 'Нет'])
     )
     user.state = BotStates.CONFIRMATION.value
     user.save()
@@ -126,14 +155,14 @@ def confirm_items(message: telebot.types.Message) -> None:
     items = ItemsForConfirmation.objects.get(user=user)
     reply = '''
             Хорошо, не будем их записывать, попробуйте снова.
-            Вы можете завершить записывание, написав /finish
+            Вы можете завершить запись, написав /finish
             '''
     if message.text.lower() == 'да':
         bd.save_tokens(items.items, user)
 
         reply = '''
             Отлично, я записал это в таблицу.
-            Вы можете завершить записывание, написав /finish '''
+            Вы можете завершить запись с помощью команды /finish '''
 
     bot.send_message(
         user.chat_id,
@@ -163,17 +192,16 @@ def check_database(message: telebot.types.Message) -> None:
 def finish_recording(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
     items = Items.objects.filter(user=user)
-
     bot.send_message(
         message.chat.id,
         f'''
-        Ваша таблица предметов:
-        {', '.join(map(str, items))}
+        Отправляю вам результат инвентаризации...
         '''
     )
-    
+
     frames = bd.to_dataframe(list(items))
-    bd.dataframe_to_excel(frames, str(user.chat_id))
+    csv_file = bd.dataframe_to_excel(frames, str(user.chat_id))
+    bot.send_document(message.chat.id, open(csv_file, 'rb'))
     user.state = BotStates.MAIN_MENU.value
     user.save()
 
