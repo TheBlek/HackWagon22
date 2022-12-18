@@ -50,7 +50,7 @@ def audio_processing(filename: str) -> str:
         audio_data = rec.record(source)
         # recognize (convert from speech to text)
         text = rec.recognize_google(audio_data, language="ru-RU")
-    # os.remove(f'files/{filename}')
+    os.remove(f'files/{filename}')
 
     return text
 
