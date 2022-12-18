@@ -1,48 +1,47 @@
-from pydub import AudioSegment
 import math
-import telebot
 import threading
+import telebot
 import forrest_app.bd_scripts as bd
+from pydub import AudioSegment
 from .audio_processing import audio_processing, \
-                            mp3_to_wav, \
-                            wav_to_wav
+                            mp3_to_wav
 
-res1 = []
-res2 = []
-res3 = []
-res4 = []
+RES_1: list = []
+RES_2: list = []
+RES_3: list = []
+RES_4: list = []
 
 
 def recognise_with_threads1(filename: str, begin: int, end: int) -> None:
-    global res1
-    res1 = []
+    global RES_1
+    RES_1 = []
     for i in range(begin, end):
         filename_n = str(i) + f'_{filename}'
-        res1.append(audio_processing(filename_n))
+        RES_1.append(audio_processing(filename_n))
 
 
 def recognise_with_threads2(filename: str, begin: int, end: int) -> None:
-    global res2
-    res2 = []
+    global RES_2
+    RES_2 = []
     for i in range(begin, end):
         filename_n = str(i) + f'_{filename}'
-        res2.append(audio_processing(filename_n))
+        RES_2.append(audio_processing(filename_n))
 
 
 def recognise_with_threads3(filename: str, begin: int, end: int) -> None:
-    global res3
-    res3 = []
+    global RES_3
+    RES_3 = []
     for i in range(begin, end):
         filename_n = str(i) + f'_{filename}'
-        res3.append(audio_processing(filename_n))
+        RES_3.append(audio_processing(filename_n))
 
 
 def recognise_with_threads4(filename: str, begin: int, end: int) -> None:
-    global res4
-    res4 = []
+    global RES_4
+    RES_4 = []
     for i in range(begin, end):
         filename_n = str(i) + f'_{filename}'
-        res4.append(audio_processing(filename_n))
+        RES_4.append(audio_processing(filename_n))
 
 
 def file_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
@@ -78,7 +77,7 @@ def separating_and_processing(filename: str) -> str:
     res = []
     split_wav = SplitWavAudioMubin('files', filename)
     cnt_files = split_wav.multiple_split(filename, min_per_split=1)
-    threads = list()
+    threads = []
     thread_1 = threading.Thread(target=recognise_with_threads1, args=(filename, 0, cnt_files//4))
     threads.append(thread_1)
     thread_1.start()
@@ -92,18 +91,18 @@ def separating_and_processing(filename: str) -> str:
     threads.append(thread_4)
     thread_4.start()
 
-    global res1, res2, res3, res4
+    global RES_1, RES_2, RES_3, RES_4
 
     for thr in threads:
         thr.join()
 
-    for elem in res1:
+    for elem in RES_1:
         res.append(elem)
-    for elem in res2:
+    for elem in RES_2:
         res.append(elem)
-    for elem in res3:
+    for elem in RES_3:
         res.append(elem)
-    for elem in res4:
+    for elem in RES_4:
         res.append(elem)
 
     print(' '.join(res))
