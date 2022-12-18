@@ -3,7 +3,7 @@ import re
 import telebot
 import forrest_app.bd_scripts as bd
 
-from keyboards import Keyboard
+from .keyboards import Keyboard
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
 from .speech_recognition.file_processing import separating_and_processing, \
