@@ -2,7 +2,7 @@ from functools import partial
 import re
 import telebot
 import forrest_app.bd_scripts as bd
-
+from .keyboards import Keyboard
 from settings import BOT_TOKEN, BotStates
 from .models import BotUser, Items, ItemsForConfirmation
 from .speech_recognition.file_processing import separating_and_processing, \
@@ -110,7 +110,8 @@ def process_audio(message: telebot.types.Message) -> None:
         Вы перечислили:
         {', '.join(map(str, items))}
         Всё правильно?(да/нет)
-        '''
+        ''',
+        reply_markup=Keyboard(['Да', 'Нет'])
     )
     user.state = BotStates.CONFIRMATION.value
     user.save()
@@ -134,7 +135,8 @@ def process_file(message: telebot.types.Message) -> None:
         message.chat.id,
         f'''
         Записываем?(да/нет)
-        '''
+        ''',
+        reply_markup=Keyboard(['Да', 'Нет'])
     )
     user.state = BotStates.CONFIRMATION.value
     user.save()
@@ -146,8 +148,7 @@ def confirm_items(message: telebot.types.Message) -> None:
     if not message.text.lower() in ['да', 'нет']:
         bot.send_message(
             user.chat_id,
-            "Я вас не понял, попробуйте снова"
-        )
+            "Я вас не понял, попробуйте снова")
         return
 
     items = ItemsForConfirmation.objects.get(user=user)
