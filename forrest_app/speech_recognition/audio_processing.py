@@ -1,16 +1,30 @@
 import re
 import speech_recognition as sr
 import os
-
+import telebot
 from pydub import AudioSegment
 from ..models import BotUser
+import forrest_app.bd_scripts as bd
+
+
+def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
+    """ Сохраняет файл ogg и возвращает има файла без пути,
+        чтобы дальше при конвертации не узнавать user.chat_id """
+
+    user = bd.user(message.chat.id)
+    file_info = bot.get_file(message.voice.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
+        audio_message.write(downloaded_file)
+
+    return f'{user.chat_id}.ogg'
 
 
 def ogg_to_wav(filename: str, user: BotUser) -> str:
     """ Сохраняет OGG как WAV """
 
     dst = f'files/{user.chat_id}.wav'
-    sound = AudioSegment.from_ogg(f'{filename}')
+    sound = AudioSegment.from_ogg(f'files/{filename}')
     sound.export(dst, format="wav")
 
     return f'{user.chat_id}.wav'

@@ -9,7 +9,8 @@ from .speech_recognition.file_processing import separating_and_processing, \
                                                 file_download
 from .speech_recognition.audio_processing import audio_processing, \
                                                     to_tokens, \
-                                                    ogg_to_wav
+                                                    ogg_to_wav, \
+                                                    ogg_download
 
 
 bot: telebot.TeleBot = telebot.TeleBot(BOT_TOKEN)
@@ -90,10 +91,9 @@ def start_recording(message: telebot.types.Message) -> None:
 def process_audio(message: telebot.types.Message) -> None:
     user = bd.user(message.chat.id)
 
-    file_info = bot.get_file(message.voice.file_id)
     # так как это голосовое, то скачиваем ogg и конвертируем в wav
-    # ogg_filename = ogg_download(bot, message)
-    wav_filename = ogg_to_wav(file_info.file_path, user)
+    ogg_filename = ogg_download(bot, message)
+    wav_filename = ogg_to_wav(ogg_filename, user)
     text = audio_processing(wav_filename)
     items = to_tokens(text)
 
