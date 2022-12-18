@@ -269,13 +269,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -307,13 +301,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -342,13 +330,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -378,13 +360,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -416,13 +392,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -454,13 +424,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -490,13 +454,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -526,13 +484,7 @@ def to_tokens(text: str) -> list:
         year = splited[splited.index("год") + 1]
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
