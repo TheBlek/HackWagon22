@@ -1,16 +1,30 @@
 import re
 import speech_recognition as sr
 import os
-
+import telebot
 from pydub import AudioSegment
 from ..models import BotUser
+import forrest_app.bd_scripts as bd
+
+
+def ogg_download(bot: telebot.TeleBot, message: telebot.types.Message) -> str:
+    """ Сохраняет файл ogg и возвращает има файла без пути,
+        чтобы дальше при конвертации не узнавать user.chat_id """
+
+    user = bd.user(message.chat.id)
+    file_info = bot.get_file(message.voice.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    with open(f'files/{user.chat_id}.ogg', 'wb') as audio_message:
+        audio_message.write(downloaded_file)
+
+    return f'{user.chat_id}.ogg'
 
 
 def ogg_to_wav(filename: str, user: BotUser) -> str:
     """ Сохраняет OGG как WAV """
 
     dst = f'files/{user.chat_id}.wav'
-    sound = AudioSegment.from_ogg(f'{filename}')
+    sound = AudioSegment.from_ogg(f'files/{filename}')
     sound.export(dst, format="wav")
 
     return f'{user.chat_id}.wav'
@@ -94,133 +108,111 @@ def to_tokens(text: str) -> list:
     text = text.replace(" одиннадцатая ", " 11 ")
     text = text.replace(" одиннадцатое ", " 11 ")
     text = text.replace(" одиннадцатые ", " 11 ")
-    text = text.replace(" одиннадцатых ", " 11 ")
 
     text = text.replace(" двенадцатый ", " 12 ")
     text = text.replace(" двенадцатая ", " 12 ")
     text = text.replace(" двенадцатое ", " 12 ")
     text = text.replace(" двенадцатые ", " 12 ")
-    text = text.replace(" двенадцатых ", " 12 ")
 
     text = text.replace(" тринадцатый ", " 13 ")
     text = text.replace(" тринадцатая ", " 13 ")
     text = text.replace(" тринадцатое ", " 13 ")
     text = text.replace(" тринадцатые ", " 13 ")
-    text = text.replace(" тринадцатых ", " 13 ")
 
     text = text.replace(" четырендцатый ", " 14 ")
     text = text.replace(" четырендцатая ", " 14 ")
     text = text.replace(" четырендцатое ", " 14 ")
     text = text.replace(" четырендцатые ", " 14 ")
-    text = text.replace(" четырендцатых ", " 14 ")
 
     text = text.replace(" пятнадцатый ", " 15 ")
     text = text.replace(" пятнадцатая ", " 15 ")
     text = text.replace(" пятнадцатое ", " 15 ")
     text = text.replace(" пятнадцатые ", " 15 ")
-    text = text.replace(" пятнадцатых ", " 15 ")
 
     text = text.replace(" шестнадцатый ", " 16 ")
     text = text.replace(" шестнадцатая ", " 16 ")
     text = text.replace(" шестнадцатое ", " 16 ")
     text = text.replace(" шестнадцатые ", " 16 ")
-    text = text.replace(" шестнадцатых ", " 16 ")
 
     text = text.replace(" семнадцатый ", " 17 ")
     text = text.replace(" семнадцатая ", " 17 ")
     text = text.replace(" семнадцатое ", " 17 ")
     text = text.replace(" семнадцатые ", " 17 ")
-    text = text.replace(" семнадцатых ", " 17 ")
 
     text = text.replace(" восемнадцатый ", " 18 ")
     text = text.replace(" восемнадцатая ", " 18 ")
     text = text.replace(" восемнадцатое ", " 18 ")
     text = text.replace(" восемнадцатые ", " 18 ")
-    text = text.replace(" восемнадцатых ", " 18 ")
 
     text = text.replace(" девятнадцатый ", " 19 ")
     text = text.replace(" девятнадцатая ", " 19 ")
     text = text.replace(" девятнадцатое ", " 19 ")
     text = text.replace(" девятнадцатые ", " 19 ")
-    text = text.replace(" девятнадцатых ", " 19 ")
 
     text = text.replace(" двадцатый ", " 20 ")
     text = text.replace(" двадцатая ", " 20 ")
     text = text.replace(" двадцатое ", " 20 ")
     text = text.replace(" двадцатые ", " 20 ")
-    text = text.replace(" двадцатых ", " 20 ")
 
     text = text.replace(" двадцать первый ", " 21 ")
     text = text.replace(" двадцать первая ", " 21 ")
     text = text.replace(" двадцать первое ", " 21 ")
     text = text.replace(" двадцать первые ", " 21 ")
-    text = text.replace(" двадцать первых ", " 21 ")
 
     text = text.replace(" двадцать второй ", " 22 ")
     text = text.replace(" двадцать вторая ", " 22 ")
     text = text.replace(" двадцать второе ", " 22 ")
     text = text.replace(" двадцать вторые ", " 22 ")
-    text = text.replace(" двадцать вторых ", " 22 ")
 
     text = text.replace(" первый ", " 1 ")
     text = text.replace(" первая ", " 1 ")
     text = text.replace(" первое ", " 1 ")
     text = text.replace(" первые ", " 1 ")
-    text = text.replace(" первых ", " 1 ")
 
     text = text.replace(" второй ", " 2 ")
     text = text.replace(" вторая ", " 2 ")
     text = text.replace(" второе ", " 2 ")
     text = text.replace(" вторые ", " 2 ")
-    text = text.replace(" вторых ", " 2 ")
 
     text = text.replace(" третий ", " 3 ")
     text = text.replace(" третья ", " 3 ")
     text = text.replace(" третье ", " 3 ")
     text = text.replace(" третьи ", " 3 ")
-    text = text.replace(" третьих ", " 3 ")
 
     text = text.replace(" четвёртый ", " 4 ")
     text = text.replace(" четвёртая ", " 4 ")
     text = text.replace(" четвёртое ", " 4 ")
     text = text.replace(" четвёртые ", " 4 ")
-    text = text.replace(" четвёртых ", " 4 ")
 
     text = text.replace(" пятый ", " 5 ")
     text = text.replace(" пятая ", " 5 ")
     text = text.replace(" пятое ", " 5 ")
     text = text.replace(" пятые ", " 5 ")
-    text = text.replace(" пятых ", " 5 ")
 
     text = text.replace(" шестой ", " 6 ")
     text = text.replace(" шестая ", " 6 ")
     text = text.replace(" шестое ", " 6 ")
     text = text.replace(" шестые ", " 6 ")
-    text = text.replace(" шестых ", " 6 ")
 
     text = text.replace(" седьмой ", " 7 ")
     text = text.replace(" седьмая ", " 7 ")
     text = text.replace(" седьмое ", " 7 ")
     text = text.replace(" седьмые ", " 7 ")
-    text = text.replace(" седьмых ", " 7 ")
 
     text = text.replace(" восьмой ", " 8 ")
     text = text.replace(" восьмая ", " 8 ")
     text = text.replace(" восьмое ", " 8 ")
     text = text.replace(" восьмые ", " 8 ")
-    text = text.replace(" восьмых ", " 8 ")
 
     text = text.replace(" девятый ", " 9 ")
     text = text.replace(" девятая ", " 9 ")
     text = text.replace(" девятое ", " 9 ")
     text = text.replace(" девятые ", " 9 ")
-    text = text.replace(" девятых ", " 9 ")
 
     text = text.replace(" десятый ", " 10 ")
     text = text.replace(" десятая ", " 10 ")
     text = text.replace(" десятое ", " 10 ")
     text = text.replace(" десятые ", " 10 ")
-    text = text.replace(" десятых ", " 10 ")
 
     text = text.replace(" следующий ", " ")
     text = text.replace(" следующая ", " ")
@@ -229,6 +221,7 @@ def to_tokens(text: str) -> list:
     text = text.replace(" следующей ", " ")
     text = text.replace(" следующем ", " ")
     text = text.replace(" следующим ", " ")
+    text = text.replace(" следующего ", " ")
 
     text = text.replace(" есть ", " ")
     text = text.replace(" такой ", " ")
@@ -254,6 +247,24 @@ def to_tokens(text: str) -> list:
     text = text.replace(" равнобоковой ", " рама боковая ")
     text = text.replace(" романовой ", " рама боковая ")
     text = text.replace(" ыково ", " боковая ")
+    text = text.replace(" ыкова ", " боковая ")
+    text = text.replace(" равны ", " рама ")
+    text = text.replace(" равна ", " рама ")
+    text = text.replace(" пары ", " пара ")
+    text = text.replace(" программы ", " рама ")
+    text = text.replace(" робаково ", " рама боковая ")
+    text = text.replace(" robakowo ", " рама боковая ")
+    text = text.replace(" ранковая ", " рама боковая ")
+    text = text.replace(" колёсные ", " колёсная ")
+    text = text.replace(" абокова ", " боковая ")
+    text = text.replace(" абоково ", " боковая ")
+    text = text.replace(" романково ", " рама боковая ")
+    text = text.replace(" рама ", " ")
+
+
+    text = text.replace(" боковая ", " рама боковая ")
+
+
 
     result = []
     pattern1 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\s(((\d+)\s)+)год\s(((\d+)\s)+))"
@@ -277,13 +288,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -315,13 +320,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -350,13 +349,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -370,7 +363,7 @@ def to_tokens(text: str) -> list:
         result.append(items)
         print(items)
 
-    pattern4 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\sкитай\sгод\s(((\d+)\s)+))"
+    pattern4 = "((([ёа-я]+\s){2})номер\s(((\d+)\s)+)завод\sКитай\sгод\s(((\d+)\s)+))"
     everything = re.findall(pattern4, text)
     for match in everything:
         splited = match[0].split()
@@ -386,13 +379,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -424,13 +411,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -462,13 +443,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -498,13 +473,7 @@ def to_tokens(text: str) -> list:
 
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -534,13 +503,7 @@ def to_tokens(text: str) -> list:
         year = splited[splited.index("год") + 1]
         if "год" in splited:
             try:
-                if len(year) == 1:
-                    year = '200' + year
-                else:
-                    if int(year) < 50:
-                        year = '20' + year
-                    elif int(year) < 100:
-                        year = '19' + year
+                year = normalized_year(year)
             except Exception as e:
                 pass
 
@@ -563,4 +526,4 @@ def normalized_year(year: str) -> str:
         elif int(year) < 100:
             year = '19' + year
 
-    return year
+    return float(year)

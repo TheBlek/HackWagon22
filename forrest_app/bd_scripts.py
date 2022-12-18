@@ -44,6 +44,11 @@ def dataframe_to_excel(data_frame: pd.DataFrame, filename: str) -> str:
 
     data_frame.reset_index()
     data_frame.to_csv(f'files/{filename}.csv', index=False)
+    '''with open(f'files/{filename}.csv') as file:
+        lines = file.read().split('\n')
+    lines = [lines[0]] + [line[:-1] for line in lines[1:]]
+    with open(f'files/{filename}.csv') as file:
+        file.write('\n'.join(lines))'''
 
     return f'files/{filename}.csv'
 
