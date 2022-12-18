@@ -42,7 +42,8 @@ def to_dataframe(tokens: list) -> pd.DataFrame:
 def dataframe_to_excel(data_frame: pd.DataFrame, filename: str) -> str:
     """ Создание csv таблицы и вывод названия с путем для последующей отправки """
 
-    data_frame.to_csv(f'files/{filename}.csv', columns=['наименование', 'номер', 'год', 'завод', 'комментарий'])
+    data_frame.reset_index()
+    data_frame.to_csv(f'files/{filename}.csv', index=False)
 
     return f'files/{filename}.csv'
 
