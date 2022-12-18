@@ -81,7 +81,7 @@ def start_recording(message: telebot.types.Message) -> None:
         message.chat.id,
         '''
         Новая запись начата.
-        Чтобы добавить предметы отправте голосовое сообщение или аудиофайл.
+        Чтобы добавить предметы отправьте голосовое сообщение или аудиофайл.
         Чтобы завершить запись отправьте /finish.
         '''
     )
@@ -153,14 +153,14 @@ def confirm_items(message: telebot.types.Message) -> None:
     items = ItemsForConfirmation.objects.get(user=user)
     reply = '''
             Хорошо, не будем их записывать, попробуйте снова.
-            Вы можете завершить записывание, написав /finish
+            Вы можете завершить запись, написав /finish
             '''
     if message.text.lower() == 'да':
         bd.save_tokens(items.items, user)
 
         reply = '''
             Отлично, я записал это в таблицу.
-            Вы можете завершить запись, написав /finish '''
+            Вы можете завершить запись с помощью команды /finish '''
 
     bot.send_message(
         user.chat_id,
@@ -193,8 +193,7 @@ def finish_recording(message: telebot.types.Message) -> None:
     bot.send_message(
         message.chat.id,
         f'''
-        Ваша итоговая таблица предметов:
-        {', '.join(map(str, items))}
+        Отправляю вам результат инвентаризации...
         '''
     )
 
